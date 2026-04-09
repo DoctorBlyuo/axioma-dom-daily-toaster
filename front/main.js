@@ -310,10 +310,6 @@ createApp({
 
       if (queueUsers.value.length > 0) {
         currentUser.value = queueUsers.value[0];
-        jiraWindow?.postMessage(
-          `${currentUser.value.surname} ${currentUser.value.name}`,
-          "https://oneproject.it-one.ru"
-        );
         resetAndStartTimer();
       } else {
         currentUser.value = null;
@@ -337,10 +333,6 @@ createApp({
     const selectUser = (user) => {
       currentUser.value = user;
       resetAndStartTimer();
-      jiraWindow?.postMessage(
-          `${currentUser.value.surname} ${currentUser.value.name}`,
-          "https://oneproject.it-one.ru"
-        );
     };
 
     watch(

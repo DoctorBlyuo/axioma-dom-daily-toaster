@@ -1,0 +1,21 @@
+users:
+- name: Дмитрий
+  patronymic: Сергеевич
+  status: Активен
+  surname: Новиков
+- name: Алексей
+  patronymic: Дмитриевич
+  status: Активен
+  surname: Козлов
+- name: Ivan
+  patronymic: '-'
+  status: Активен
+  surname: Nomokonov
+- name: Aleksei
+  patronymic: ''
+  status: Активен
+  surname: Korolkov
+- name: Иван
+  patronymic: Иванович
+  status: В отпуске
+  surname: Иванов

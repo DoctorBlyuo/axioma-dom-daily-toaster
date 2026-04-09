@@ -39,10 +39,11 @@ createApp({
     let draggedUser = null;
     let draggedFrom = null;
 
-    // Таймер
+    // Таймер - исправленная версия с requestAnimationFrame
     const timerSeconds = ref(0);
     const timerRunning = ref(false);
-    let timerInterval = null;
+    let timerStartTime = null;
+    let timerAnimationFrame = null;
 
     const formattedTime = computed(() => {
       const mins = Math.floor(timerSeconds.value / 60);
@@ -64,30 +65,54 @@ createApp({
       return "toast-burnt";
     });
 
+    const updateTimer = () => {
+      if (!timerRunning.value) return;
+
+      if (timerStartTime) {
+        const now = Date.now();
+        const elapsed = Math.floor((now - timerStartTime) / 1000);
+        timerSeconds.value = elapsed;
+      }
+
+      timerAnimationFrame = requestAnimationFrame(updateTimer);
+    };
+
     const startTimer = () => {
       if (timerRunning.value) return;
+
+      timerStartTime = Date.now() - (timerSeconds.value * 1000);
       timerRunning.value = true;
-      timerInterval = setInterval(() => {
-        timerSeconds.value++;
-      }, 1000);
-      jiraWindow?.postMessage(
+      timerAnimationFrame = requestAnimationFrame(updateTimer);
+
+      if (currentUser.value) {
+        jiraWindow?.postMessage(
           `${currentUser.value.surname} ${currentUser.value.name}`,
           "https://oneproject.it-one.ru"
         );
+      }
     };
 
     const pauseTimer = () => {
       if (!timerRunning.value) return;
+
       timerRunning.value = false;
-      if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
+      if (timerAnimationFrame) {
+        cancelAnimationFrame(timerAnimationFrame);
+        timerAnimationFrame = null;
+      }
+
+      if (timerStartTime) {
+        const now = Date.now();
+        const elapsed = Math.floor((now - timerStartTime) / 1000);
+        timerSeconds.value = elapsed;
+        timerStartTime = null;
       }
     };
 
     const resetTimer = () => {
       pauseTimer();
       timerSeconds.value = 0;
+      timerStartTime = null;
     };
 
     const resetAndStartTimer = () => {
@@ -98,6 +123,17 @@ createApp({
     const resetTimerOnly = () => {
       resetTimer();
     };
+
+    // Обработчик видимости вкладки - синхронизация времени при возвращении
+    const handleVisibilityChange = () => {
+      if (!document.hidden && timerRunning.value && timerStartTime) {
+        const now = Date.now();
+        const elapsed = Math.floor((now - timerStartTime) / 1000);
+        timerSeconds.value = elapsed;
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     // Для модалок
     const modalTitle = ref("");
@@ -547,9 +583,10 @@ createApp({
     });
 
     onUnmounted(() => {
-      if (timerInterval) {
-        clearInterval(timerInterval);
+      if (timerAnimationFrame) {
+        cancelAnimationFrame(timerAnimationFrame);
       }
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     });
 
     return {

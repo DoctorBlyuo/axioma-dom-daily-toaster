@@ -181,14 +181,16 @@ body {
   font-weight: bold;
   background: #6c757d;
   color: white;
-  width: 28px;
-  height: 28px;
+  width: 33px;
+  height: 33px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   border-radius: 50%;
-  font-size: 16px;
+  font-size: 20px;
   flex-shrink: 0;
+  padding-top: 6px;
+  line-height: 90%;
 }
 
 .queue-item.active .queue-number {
@@ -200,7 +202,7 @@ body {
   flex: 1;
   font-weight: 500;
   word-break: break-word;
-  font-size: 16px;
+  font-size: 20px;
 }
 
 /* Расширенный current-user */

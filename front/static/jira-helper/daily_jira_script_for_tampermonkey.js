@@ -1,6 +1,6 @@
 
 // ==UserScript==
-// @name         Daily Jira
+// @name         Daily Jira Prod
 // @namespace    http://tampermonkey.net/
 // @version      2025-01-28
 // @description  try to take over the world!
@@ -15,7 +15,6 @@
     window.addEventListener(
         "message",
         (event) => {
-
             if (event.origin == "https://oneproject.it-one.ru") {
                 return;
             }
@@ -54,7 +53,7 @@
         const goalInterval = setInterval(() => {
             const goal = document.querySelector("#ghx-sprint-goal");
             if (goal) {
-                source.postMessage(goal.innerText, "http://127.0.0.1:5001");
+                source.postMessage(goal.innerText, "https://axioma-dom-daily-toaster-production.up.railway.app:443");
                 clearInterval(goalInterval);
             }
         }, 100);

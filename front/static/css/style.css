@@ -34,14 +34,12 @@ body {
   gap: 8px;
   margin-bottom: 10px;
   justify-content: space-between;
-
   align-items: center;
 }
 
 .tabs > div {
   display: flex;
   gap: 8px;
-
   flex-shrink: 0;
   align-items: center;
 }
@@ -658,6 +656,33 @@ body {
 
 .modal-btn-danger:hover {
   background: #c82333;
+}
+
+/* Стили для модалки загрузки конфига */
+.upload-preview {
+  margin-top: 15px;
+  max-height: 300px;
+  overflow-y: auto;
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.upload-preview pre {
+  margin: 0;
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: monospace;
+}
+
+/* Стили для дополнительных кнопок */
+.add-button[style*="background-color: #4a5568"]:hover {
+  background-color: #2d3748 !important;
+}
+
+.add-button[style*="background-color: #17a2b8"]:hover {
+  background-color: #138496 !important;
 }
 
 /* Адаптивность */

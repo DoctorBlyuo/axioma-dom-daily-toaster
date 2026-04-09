@@ -202,9 +202,17 @@
             <div class="app-content">
               <div class="header-actions">
                 <h2>Пользователи</h2>
-                <button class="add-button" @click="openAddModal">
-                  ➕ Добавить пользователя
-                </button>
+                <div style="display: flex; gap: 10px;">
+                  <button class="add-button" @click="openAddModal">
+                    ➕ Добавить пользователя
+                  </button>
+                  <button class="add-button" style="background-color: #4a5568;" @click="downloadConfig">
+                    💾 Скачать конфиг
+                  </button>
+                  <button class="add-button" style="background-color: #17a2b8;" @click="openUploadModal">
+                    📂 Загрузить конфиг
+                  </button>
+                </div>
               </div>
 
               <div class="lists-row">
@@ -407,9 +415,36 @@
           </div>
         </div>
       </div>
+
+      <!-- Модалка загрузки конфига -->
+      <div id="uploadModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">📂 Загрузить конфиг</div>
+          <div class="modal-body">
+            <p>Выберите файл config.yaml для загрузки</p>
+            <div class="form-group">
+              <label>Файл конфигурации</label>
+              <input type="file" id="configFile" accept=".yaml,.yml" @change="handleFileSelect" />
+            </div>
+            <div v-if="uploadPreview" class="upload-preview">
+              <h4>Предпросмотр:</h4>
+              <pre>{{ uploadPreview }}</pre>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="modal-btn modal-btn-secondary" @click="closeUploadModal">
+              Отмена
+            </button>
+            <button class="modal-btn modal-btn-primary" @click="uploadConfig" :disabled="!selectedFile">
+              Загрузить и применить
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="/static/vue-3.5.32/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
     <script src="/main.js"></script>
   </body>
 </html>

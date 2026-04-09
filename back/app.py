@@ -12,9 +12,9 @@ app = Flask(__name__, static_folder='../front/static', static_url_path='/static'
 auth = HTTPBasicAuth()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-USERS_FILE = os.path.join(BASE_DIR, 'users.yaml')
+CONFIG_FILE = os.path.join(BASE_DIR, 'config.yaml')
 
-# Получаем логин и пароль из переменных окружения - БЕЗ ЗНАЧЕНИЙ ПО УМОЛЧАНИЮ
+# Получаем логин и пароль из переменных окружения
 AUTH_USERNAME = os.environ.get('AUTH_USERNAME')
 AUTH_PASSWORD = os.environ.get('AUTH_PASSWORD')
 
@@ -52,7 +52,7 @@ def main_js():
 @app.route('/api/users')
 @auth.login_required
 def get_users():
-    with open(USERS_FILE, 'r', encoding='utf-8') as f:
+    with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
         data = yaml.safe_load(f)
         users = data.get('users', [])
         for i, u in enumerate(users):
@@ -68,9 +68,10 @@ def put_users():
         u_copy = u.copy()
         u_copy.pop('id', None)
         to_save.append(u_copy)
-    with open(USERS_FILE, 'w', encoding='utf-8') as f:
+    with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
         yaml.dump({'users': to_save}, f, allow_unicode=True)
     return jsonify({'ok': True})
 
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0', port=5001)
+    port = int(os.environ.get('PORT', 5001))
+    app.run(debug=False, host='0.0.0.0', port=port)

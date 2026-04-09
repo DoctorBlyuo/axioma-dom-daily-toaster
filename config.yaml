@@ -8,7 +8,7 @@ users:
   status: Активен
   surname: Козлов
 - name: Ivan
-  patronymic: '-'
+  patronymic: ''
   status: Активен
   surname: Nomokonov
 - name: Aleksei
@@ -19,3 +19,7 @@ users:
   patronymic: Иванович
   status: В отпуске
   surname: Иванов
+- name: Сидор
+  patronymic: Сидорович
+  status: В отпуске
+  surname: Сидоров

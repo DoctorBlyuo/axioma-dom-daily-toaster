@@ -9,6 +9,11 @@ createApp({
     const inactiveUsers = ref([]);
     const queueUsers = ref([]);
     const currentUser = ref(null);
+
+    // Для загрузки конфига
+    const selectedFile = ref(null);
+    const uploadPreview = ref(null);
+
     const jiraWindow = window.open(
       "https://oneproject.it-one.ru/jira/secure/RapidBoard.jspa?rapidView=327",
       "jira"
@@ -107,8 +112,125 @@ createApp({
       activeUsers.value = users.filter((u) => u.status === "Активен");
       inactiveUsers.value = users.filter((u) => u.status !== "Активен");
 
-      // При загрузке страницы перемешиваем очередь и НЕ запускаем таймер
       shuffleUsers(false);
+    };
+
+    // Функция для скачивания конфига
+    const downloadConfig = async () => {
+      try {
+        const response = await fetch("/api/users");
+        const users = await response.json();
+
+        let yamlContent = "users:\n";
+        users.forEach(user => {
+          yamlContent += `  - surname: ${user.surname}\n`;
+          yamlContent += `    name: ${user.name}\n`;
+          yamlContent += `    patronymic: ${user.patronymic || ''}\n`;
+          yamlContent += `    status: ${user.status}\n`;
+        });
+
+        const blob = new Blob([yamlContent], { type: "text/yaml" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "config.yaml";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error("Download error:", error);
+        alert("Ошибка при скачивании конфига");
+      }
+    };
+
+    // Функции для загрузки конфига
+    const openUploadModal = () => {
+      selectedFile.value = null;
+      uploadPreview.value = null;
+      const modal = document.getElementById("uploadModal");
+      if (modal) modal.style.display = "flex";
+    };
+
+    const closeUploadModal = () => {
+      const modal = document.getElementById("uploadModal");
+      if (modal) modal.style.display = "none";
+      selectedFile.value = null;
+      uploadPreview.value = null;
+      const fileInput = document.getElementById("configFile");
+      if (fileInput) fileInput.value = "";
+    };
+
+    const handleFileSelect = (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      selectedFile.value = file;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        uploadPreview.value = e.target.result;
+      };
+      reader.readAsText(file);
+    };
+
+    const uploadConfig = async () => {
+      if (!selectedFile.value) {
+        alert('Пожалуйста, выберите файл');
+        return;
+      }
+
+      try {
+        const content = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.onerror = (e) => reject(e);
+          reader.readAsText(selectedFile.value);
+        });
+
+        // Используем js-yaml для парсинга
+        let data;
+        if (typeof jsyaml !== 'undefined') {
+          data = jsyaml.load(content);
+        } else {
+          throw new Error('js-yaml library not loaded');
+        }
+
+        const users = data.users || data;
+
+        if (!Array.isArray(users)) {
+          alert('Неверный формат: ожидается массив users');
+          return;
+        }
+
+        // Нормализуем данные
+        const normalizedUsers = users.map((u, idx) => ({
+          id: Date.now() + idx,
+          surname: u.surname || '',
+          name: u.name || '',
+          patronymic: u.patronymic || '',
+          status: u.status === 'Активен' ? 'Активен' : (u.status || 'Активен')
+        }));
+
+        const response = await fetch('/api/users', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(normalizedUsers)
+        });
+
+        if (response.ok) {
+          alert(`Загружено ${normalizedUsers.length} пользователей`);
+          closeUploadModal();
+          await loadUsers();
+        } else {
+          alert('Ошибка при сохранении конфигурации');
+        }
+      } catch (error) {
+        console.error('Upload error:', error);
+        alert('Ошибка загрузки: ' + error.message);
+      }
     };
 
     const updateToasterQueue = (shouldStartTimer = true) => {
@@ -174,17 +296,14 @@ createApp({
     const nextUser = () => {
       if (queueUsers.value.length === 0) return;
 
-      // Находим индекс текущего выбранного пользователя
       const currentIndex = queueUsers.value.findIndex(
         (u) => u.id === currentUser.value.id
       );
 
       if (currentIndex !== -1) {
-        // Удаляем текущего выбранного пользователя
         queueUsers.value.splice(currentIndex, 1);
       }
 
-      // После удаления, если очередь не пуста, берем первого
       if (queueUsers.value.length > 0) {
         currentUser.value = queueUsers.value[0];
         jiraWindow?.postMessage(
@@ -447,7 +566,6 @@ createApp({
       modalTitle,
       form,
       deleteUser,
-      // Таймер
       timerSeconds,
       timerRunning,
       formattedTime,
@@ -458,7 +576,6 @@ createApp({
       resetTimer,
       resetAndStartTimer,
       resetTimerOnly,
-      // Методы
       shuffleUsers,
       nextUser,
       markLate,
@@ -475,6 +592,13 @@ createApp({
       onDragEnd,
       onDragOver,
       onDrop,
+      downloadConfig,
+      openUploadModal,
+      closeUploadModal,
+      handleFileSelect,
+      uploadConfig,
+      selectedFile,
+      uploadPreview,
     };
   },
 }).mount("#app");

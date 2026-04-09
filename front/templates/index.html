@@ -144,7 +144,7 @@
                   <button
                     class="toaster-btn"
                     @click="nextUser"
-                    :disabled="queueUsers.length === 0"
+                    :disabled="queueUsers.length === 0 || !timerRunning"
                   >
                     🎲 Следующий
                   </button>

@@ -70,6 +70,10 @@ createApp({
       timerInterval = setInterval(() => {
         timerSeconds.value++;
       }, 1000);
+      jiraWindow?.postMessage(
+          `${currentUser.value.surname} ${currentUser.value.name}`,
+          "https://oneproject.it-one.ru"
+        );
     };
 
     const pauseTimer = () => {

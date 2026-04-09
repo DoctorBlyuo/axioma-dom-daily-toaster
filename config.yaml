@@ -1,97 +1,120 @@
+groups:
+- color: '#4CAF50'
+  id: 1
+  name: Разработчики
+- color: '#FF9800'
+  id: 2
+  name: Тестировщики
+- color: '#00BCD4'
+  id: 3
+  name: Автотестировщики
+- color: '#9C27B0'
+  id: 4
+  name: Аналитики
+- color: '#795548'
+  id: 5
+  name: Технические писатели
+- color: '#F44336'
+  id: 6
+  name: Менеджеры
+jira:
+  url: "https://oneproject.it-one.ru/jira/secure/RapidBoard.jspa?rapidView=327"
+  origin: "https://oneproject.it-one.ru"
+  board_name: "Daily Toaster Board"
 users:
-  - surname: Zhivotovskaya
-    name: Margarita
-    patronymic:
-    status: Активен
-  - surname: Vasiliev
-    name: Alexey
-    patronymic:
-    status: Активен
-  - surname: Sukhorukov
-    name: Valeriy
-    patronymic:
-    status: Активен
-  - surname: Starovoitova
-    name: Elizaveta
-    patronymic:
-    status: Активен
-  - surname: Shapovalov
-    name: Andrey
-    patronymic:
-    status: Активен
-  - surname: Petrenko
-    name: Alexander
-    patronymic:
-    status: Активен
-  - surname: Ostanina
-    name: Kseniya
-    patronymic:
-    status: Активен
-  - surname: Ognegina
-    name: Polina
-    patronymic:
-    status: Активен
-  - surname: Nedomolkin
-    name: Igor
-    patronymic:
-    status: Активен
-  - surname: Markina
-    name: Dariya
-    patronymic:
-    status: Активен
-  - surname: Lukayanov
-    name: Sergey
-    patronymic:
-    status: Активен
-  - surname: Khalibulov
-    name: Rinat
-    patronymic:
-    status: Активен
-  - surname: Korolkov
-    name: Aleksei
-    patronymic:
-    status: Активен
-  - surname: Kobzar
-    name: Alina
-    patronymic:
-    status: Активен
-  - surname: Karsakov
-    name: Rustam
-    patronymic:
-    status: Активен
-  - surname: Gasanov
-    name: Rauf
-    patronymic:
-    status: Активен
-  - surname: Garibov
-    name: Aleksandr
-    patronymic:
-    status: Активен
-  - surname: Fedoseeva
-    name: Anastasiya
-    patronymic:
-    status: Активен
-  - surname: Ababina
-    name: Julia
-    patronymic:
-    status: Активен
-  - surname: Zvereva
-    name: Julia
-    patronymic:
-    status: Активен
-  - surname: Korotkiy
-    name: Sergey
-    patronymic:
-    status: Активен
-  - surname: Schastnyi
-    name: Anton
-    patronymic:
-    status: Активен
-  - surname: Nomokonov
-    name: Ivan
-    patronymic:
-    status: Активен
-  - surname: Kogan
-    name: Anna
-    patronymic:
-    status: Активен
+- name: Margarita
+  patronymic: null
+  status: Активен
+  surname: Zhivotovskaya
+- name: Alexey
+  patronymic: null
+  status: Активен
+  surname: Vasiliev
+- name: Valeriy
+  patronymic: null
+  status: Активен
+  surname: Sukhorukov
+- name: Elizaveta
+  patronymic: null
+  status: Активен
+  surname: Starovoitova
+- name: Andrey
+  patronymic: null
+  status: Активен
+  surname: Shapovalov
+- name: Alexander
+  patronymic: null
+  status: Активен
+  surname: Petrenko
+- name: Kseniya
+  patronymic: null
+  status: Активен
+  surname: Ostanina
+- name: Polina
+  patronymic: null
+  status: Активен
+  surname: Ognegina
+- name: Igor
+  patronymic: null
+  status: Активен
+  surname: Nedomolkin
+- name: Dariya
+  patronymic: null
+  status: Активен
+  surname: Markina
+- name: Sergey
+  patronymic: null
+  status: Активен
+  surname: Lukayanov
+- name: Rinat
+  patronymic: null
+  status: Активен
+  surname: Khalibulov
+- name: Aleksei
+  patronymic: null
+  status: Активен
+  surname: Korolkov
+- name: Alina
+  patronymic: null
+  status: Активен
+  surname: Kobzar
+- name: Rustam
+  patronymic: null
+  status: Активен
+  surname: Karsakov
+- name: Rauf
+  patronymic: null
+  status: Активен
+  surname: Gasanov
+- name: Aleksandr
+  patronymic: null
+  status: Активен
+  surname: Garibov
+- name: Anastasiya
+  patronymic: null
+  status: Активен
+  surname: Fedoseeva
+- name: Julia
+  patronymic: null
+  status: Активен
+  surname: Ababina
+- name: Julia
+  patronymic: null
+  status: Активен
+  surname: Zvereva
+- name: Sergey
+  patronymic: null
+  status: Активен
+  surname: Korotkiy
+- name: Anton
+  patronymic: null
+  status: Активен
+  surname: Schastnyi
+- name: Ivan
+  patronymic: null
+  status: Активен
+  surname: Nomokonov
+- name: Anna
+  patronymic: null
+  status: Активен
+  surname: Kogan

@@ -1111,7 +1111,128 @@ body {
   }
 }
 
+/* Кнопка настройки Jira */
+.jira-settings-btn {
+    background: #0052cc;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+}
+
+.jira-settings-btn:hover {
+    background: #0065ff;
+    transform: translateY(-2px);
+}
+
+/* Модалка среднего размера */
+.modal-medium {
+    max-width: 500px;
+}
+
+/* Тест подключения Jira */
+.jira-test-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.test-jira-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.test-jira-btn:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+.test-result {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 13px;
+}
+
+.test-result .success {
+    color: #28a745;
+}
+
+.test-result .error {
+    color: #dc3545;
+}
+
+/* Модалка среднего размера */
+.modal-medium {
+    max-width: 500px;
+}
+
+/* Кнопка настройки Jira */
+.jira-settings-btn {
+    background: #0052cc;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+}
+
+.jira-settings-btn:hover {
+    background: #0065ff;
+    transform: translateY(-2px);
+}
+
+/* Тест подключения Jira */
+.jira-test-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.test-jira-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.test-jira-btn:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+.test-result {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 13px;
+}
+
+.test-result .success {
+    color: #28a745;
+}
+
+.test-result .error {
+    color: #dc3545;
+}
+
 /* Ссылка для шестерёнки */
 .helper-link {
   text-decoration: none;
 }
+

@@ -9,32 +9,19 @@ createApp({
     const inactiveUsers = ref([]);
     const queueUsers = ref([]);
     const currentUser = ref(null);
+    let jiraWindow = null;
+
+    // Jira конфиг
+    const jiraConfig = ref({
+        url: '',
+        origin: '',
+        board_name: ''
+    });
+    const testResult = ref(null);
 
     // Для загрузки конфига
     const selectedFile = ref(null);
     const uploadPreview = ref(null);
-
-    const jiraWindow = window.open(
-      "https://oneproject.it-one.ru/jira/secure/RapidBoard.jspa?rapidView=327",
-      "jira"
-    );
-    const goalListener = (event) => {
-      if (event.origin !== "https://oneproject.it-one.ru") {
-        return;
-      }
-      currentGoal.value = event.data;
-    };
-    window.addEventListener("message", goalListener);
-    const goalTimer = setInterval(() => {
-      if (currentGoal.value) {
-        clearInterval(goalTimer);
-      }
-
-      jiraWindow.postMessage(
-        { type: "getGoal" },
-        "https://oneproject.it-one.ru"
-      );
-    }, 1000);
 
     let draggedUser = null;
     let draggedFrom = null;
@@ -65,6 +52,91 @@ createApp({
       return "toast-burnt";
     });
 
+    // Загрузка Jira конфига
+    const loadJiraConfig = async () => {
+        try {
+            const res = await fetch('/api/config');
+            const config = await res.json();
+            jiraConfig.value = config;
+            initJiraWindow();
+        } catch (error) {
+            console.error('Ошибка загрузки конфига Jira:', error);
+        }
+    };
+
+    // Инициализация Jira окна
+    const initJiraWindow = () => {
+        if (jiraWindow && !jiraWindow.closed) {
+            jiraWindow.close();
+        }
+        if (jiraConfig.value.url) {
+            jiraWindow = window.open(jiraConfig.value.url, 'jira');
+            setupGoalListener();
+        }
+    };
+
+    // Настройка слушателя цели спринта
+    const setupGoalListener = () => {
+        const goalListener = (event) => {
+            if (event.origin !== jiraConfig.value.origin) return;
+            currentGoal.value = event.data;
+        };
+        window.addEventListener('message', goalListener);
+
+        const goalTimer = setInterval(() => {
+            if (currentGoal.value) {
+                clearInterval(goalTimer);
+            }
+            if (jiraWindow && !jiraWindow.closed) {
+                jiraWindow.postMessage({ type: 'getGoal' }, jiraConfig.value.origin);
+            }
+        }, 1000);
+    };
+
+    // Сохранение Jira конфига
+    const saveJiraConfig = async () => {
+        try {
+            const res = await fetch('/api/config', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(jiraConfig.value)
+            });
+            if (res.ok) {
+                closeJiraModal();
+                initJiraWindow();
+                alert('Настройки Jira сохранены!');
+            }
+        } catch (error) {
+            console.error('Ошибка сохранения:', error);
+            alert('Ошибка сохранения настроек');
+        }
+    };
+
+    // Проверка подключения к Jira
+    const testJiraConnection = () => {
+        if (!jiraConfig.value.url || !jiraConfig.value.origin) {
+            testResult.value = { success: false, message: 'Заполните URL и Origin' };
+            return;
+        }
+
+        const testWindow = window.open(jiraConfig.value.url, 'jira_test');
+        if (testWindow) {
+            testResult.value = { success: true, message: 'Jira доступна!' };
+            setTimeout(() => testWindow.close(), 2000);
+        } else {
+            testResult.value = { success: false, message: 'Не удалось открыть Jira. Проверьте URL и разрешите всплывающие окна' };
+        }
+    };
+
+    const openJiraModal = () => {
+        document.getElementById('jiraModal').classList.add('show');
+    };
+
+    const closeJiraModal = () => {
+        document.getElementById('jiraModal').classList.remove('show');
+        testResult.value = null;
+    };
+
     const updateTimer = () => {
       if (!timerRunning.value) return;
 
@@ -84,10 +156,10 @@ createApp({
       timerRunning.value = true;
       timerAnimationFrame = requestAnimationFrame(updateTimer);
 
-      if (currentUser.value) {
-        jiraWindow?.postMessage(
+      if (currentUser.value && jiraWindow && !jiraWindow.closed) {
+        jiraWindow.postMessage(
           `${currentUser.value.surname} ${currentUser.value.name}`,
-          "https://oneproject.it-one.ru"
+          jiraConfig.value.origin
         );
       }
     };
@@ -228,7 +300,6 @@ createApp({
           reader.readAsText(selectedFile.value);
         });
 
-        // Используем js-yaml для парсинга
         let data;
         if (typeof jsyaml !== 'undefined') {
           data = jsyaml.load(content);
@@ -243,7 +314,6 @@ createApp({
           return;
         }
 
-        // Нормализуем данные
         const normalizedUsers = users.map((u, idx) => ({
           id: Date.now() + idx,
           surname: u.surname || '',
@@ -580,6 +650,7 @@ createApp({
 
     onMounted(() => {
       loadUsers();
+      loadJiraConfig();
     });
 
     onUnmounted(() => {
@@ -632,6 +703,13 @@ createApp({
       uploadConfig,
       selectedFile,
       uploadPreview,
+      // Jira
+      jiraConfig,
+      testResult,
+      openJiraModal,
+      closeJiraModal,
+      saveJiraConfig,
+      testJiraConnection,
     };
   },
 }).mount("#app");

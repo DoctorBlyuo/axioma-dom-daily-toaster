@@ -198,17 +198,18 @@
         </div>
 
         <!-- Рулетка -->
+        <!-- Рулетка -->
         <div class="tab-content" :class="{ active: activeTab === 'roulette' }">
             <div class="roulette-card">
                 <div class="roulette-header">
-                    <h1>🎲 Лес рук</h1>
+                    <h1>🎲 Кто сегодня?</h1>
                     <p>Случайный выбор пользователя</p>
                 </div>
                 <div class="roulette-body">
                     <div class="roulette-settings">
                         <div class="roulette-group-select">
                             <label>Выберите группу:</label>
-                            <select v-model="rouletteSelectedGroup">
+                            <select v-model="rouletteSelectedGroup" @change="resetRoulette">
                                 <option :value="null">📋 Все пользователи</option>
                                 <option v-for="group in groups" :key="group.id" :value="group.id">
                                     🏷️ {{ group.name }}
@@ -219,12 +220,29 @@
                             <span>👥 Доступно: {{ rouletteAvailableUsers.length }} человек</span>
                         </div>
                         <button class="roulette-spin-btn" @click="spinRoulette" :disabled="rouletteAvailableUsers.length === 0 || rouletteSpinning">
-                            🎲 Крутить!
+                            <span v-if="!rouletteSpinning">🎲 Крутить!</span>
+                            <span v-else>🔄 Крутится...</span>
                         </button>
                     </div>
 
-                    <div class="roulette-result" v-if="rouletteWinner">
-                        <div class="roulette-winner-animation" :class="{ 'winner-appear': rouletteWinner }">
+                    <!-- Анимированная рулетка -->
+                    <div class="roulette-wheel-container" v-if="rouletteSpinning">
+                        <div class="roulette-wheel">
+                            <div class="wheel-spinner"></div>
+                            <div class="wheel-center">🎲</div>
+                        </div>
+                        <div class="roulette-names-roller">
+                            <div class="names-roller" :style="{ transform: `translateY(-${rollerOffset}px)` }">
+                                <div v-for="(user, idx) in rollingUsers" :key="idx" class="rolling-name">
+                                    {{ user.surname }} {{ user.name }} {{ user.patronymic }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Результат -->
+                    <div class="roulette-result" v-if="rouletteWinner && !rouletteSpinning">
+                        <div class="roulette-winner-animation">
                             <div class="winner-icon">🏆</div>
                             <div class="winner-name">{{ rouletteWinner.surname }} {{ rouletteWinner.name }} {{ rouletteWinner.patronymic }}</div>
                             <div class="winner-status"
@@ -240,9 +258,14 @@
                         </div>
                     </div>
 
-                    <div class="roulette-empty" v-else-if="!rouletteWinner && rouletteAvailableUsers.length === 0">
+                    <div class="roulette-empty" v-else-if="!rouletteWinner && !rouletteSpinning && rouletteAvailableUsers.length === 0">
                         <div class="empty-icon">📭</div>
                         <div>Нет пользователей для выбора</div>
+                    </div>
+
+                    <div class="roulette-empty" v-else-if="!rouletteWinner && !rouletteSpinning && rouletteAvailableUsers.length > 0">
+                        <div class="empty-icon">🎲</div>
+                        <div>Нажмите "Крутить!" чтобы начать</div>
                     </div>
                 </div>
             </div>

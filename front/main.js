@@ -38,6 +38,9 @@ createApp({
     const rouletteSelectedGroup = ref(null);
     const rouletteWinner = ref(null);
     const rouletteSpinning = ref(false);
+    const rollingUsers = ref([]);
+    const rollerOffset = ref(0);
+    let rollingInterval = null;
 
     let draggedUser = null;
     let draggedFrom = null;
@@ -356,25 +359,67 @@ createApp({
         }
     };
 
-    // Функция вращения рулетки
+    // Функция вращения рулетки с анимацией
     const spinRoulette = () => {
         if (rouletteAvailableUsers.value.length === 0) return;
 
         rouletteSpinning.value = true;
         rouletteWinner.value = null;
 
-        let spins = 0;
-        const maxSpins = 10;
-        const spinInterval = setInterval(() => {
-            spins++;
+        // Создаем массив для прокрутки (повторяем пользователей несколько раз)
+        const usersList = [...rouletteAvailableUsers.value];
+        const repeatCount = 5;
+        rollingUsers.value = [];
+        for (let i = 0; i < repeatCount; i++) {
+            rollingUsers.value.push(...usersList);
+        }
 
-            if (spins >= maxSpins) {
-                clearInterval(spinInterval);
-                const finalIndex = Math.floor(Math.random() * rouletteAvailableUsers.value.length);
-                rouletteWinner.value = rouletteAvailableUsers.value[finalIndex];
-                rouletteSpinning.value = false;
+        let currentPosition = 0;
+        const itemHeight = 60;
+        const totalHeight = rollingUsers.value.length * itemHeight;
+        const targetPosition = (rollingUsers.value.length - usersList.length) * itemHeight;
+
+        // Запускаем анимацию прокрутки
+        if (rollingInterval) clearInterval(rollingInterval);
+
+        rollingInterval = setInterval(() => {
+            currentPosition += itemHeight / 2;
+            if (currentPosition >= totalHeight) {
+                currentPosition = targetPosition;
             }
-        }, 100);
+            rollerOffset.value = currentPosition;
+        }, 30);
+
+        // Останавливаем анимацию через 2.5 секунды и выбираем победителя
+        setTimeout(() => {
+            if (rollingInterval) {
+                clearInterval(rollingInterval);
+                rollingInterval = null;
+            }
+
+            // Выбираем случайного пользователя
+            const randomIndex = Math.floor(Math.random() * rouletteAvailableUsers.value.length);
+            rouletteWinner.value = rouletteAvailableUsers.value[randomIndex];
+
+            // Устанавливаем финальную позицию на выбранного пользователя
+            const winnerPosition = randomIndex * itemHeight;
+            rollerOffset.value = winnerPosition;
+
+            setTimeout(() => {
+                rouletteSpinning.value = false;
+            }, 200);
+        }, 2500);
+    };
+
+    // Сброс рулетки при смене группы
+    const resetRoulette = () => {
+        rouletteWinner.value = null;
+        rouletteSpinning.value = false;
+        if (rollingInterval) {
+            clearInterval(rollingInterval);
+            rollingInterval = null;
+        }
+        rollerOffset.value = 0;
     };
 
     const updateTimer = () => {
@@ -827,6 +872,9 @@ createApp({
       if (timerAnimationFrame) {
         cancelAnimationFrame(timerAnimationFrame);
       }
+      if (rollingInterval) {
+        clearInterval(rollingInterval);
+      }
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     });
 
@@ -909,7 +957,10 @@ createApp({
       rouletteWinner,
       rouletteSpinning,
       rouletteAvailableUsers,
-      spinRoulette
+      rollingUsers,
+      rollerOffset,
+      spinRoulette,
+      resetRoulette
     };
   },
 }).mount("#app");

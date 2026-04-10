@@ -34,6 +34,11 @@ createApp({
     const selectedFile = ref(null);
     const uploadPreview = ref(null);
 
+    // Рулетка
+    const rouletteSelectedGroup = ref(null);
+    const rouletteWinner = ref(null);
+    const rouletteSpinning = ref(false);
+
     let draggedUser = null;
     let draggedFrom = null;
 
@@ -59,6 +64,19 @@ createApp({
       if (timerSeconds.value < 30) return "toast-new";
       if (timerSeconds.value < 60) return "toast-ready";
       return "toast-burnt";
+    });
+
+    // Доступные пользователи для рулетки (только активные)
+    const rouletteAvailableUsers = computed(() => {
+        let users = activeUsers.value;
+
+        if (rouletteSelectedGroup.value) {
+            users = users.filter(user =>
+                user.groups && user.groups.includes(rouletteSelectedGroup.value)
+            );
+        }
+
+        return users;
     });
 
     // Загрузка Jira конфига
@@ -219,7 +237,6 @@ createApp({
         if (!user.groups.includes(selectedGroup.value.id)) {
             user.groups.push(selectedGroup.value.id);
 
-            // Обновляем пользователя в списках
             const activeIndex = activeUsers.value.findIndex(u => u.id === user.id);
             if (activeIndex !== -1) {
                 activeUsers.value[activeIndex] = { ...user };
@@ -231,8 +248,6 @@ createApp({
             }
 
             await saveToBackend();
-
-            // Обновляем список доступных пользователей
             filteredAvailableUsers.value = getAvailableUsersForGroup(selectedGroup.value.id);
         }
     };
@@ -242,7 +257,6 @@ createApp({
         if (user.groups && user.groups.includes(groupId)) {
             user.groups = user.groups.filter(g => g !== groupId);
 
-            // Обновляем пользователя в списках
             const activeIndex = activeUsers.value.findIndex(u => u.id === user.id);
             if (activeIndex !== -1) {
                 activeUsers.value[activeIndex] = { ...user };
@@ -324,7 +338,6 @@ createApp({
 
             if (res.ok) {
                 closeDeleteGroupModal();
-                // Удаляем группу у всех пользователей
                 const allUsers = [...activeUsers.value, ...inactiveUsers.value];
                 allUsers.forEach(user => {
                     if (user.groups && user.groups.includes(deleteGroup.value.id)) {
@@ -341,6 +354,27 @@ createApp({
             console.error('Ошибка:', error);
             alert('Ошибка при удалении группы');
         }
+    };
+
+    // Функция вращения рулетки
+    const spinRoulette = () => {
+        if (rouletteAvailableUsers.value.length === 0) return;
+
+        rouletteSpinning.value = true;
+        rouletteWinner.value = null;
+
+        let spins = 0;
+        const maxSpins = 10;
+        const spinInterval = setInterval(() => {
+            spins++;
+
+            if (spins >= maxSpins) {
+                clearInterval(spinInterval);
+                const finalIndex = Math.floor(Math.random() * rouletteAvailableUsers.value.length);
+                rouletteWinner.value = rouletteAvailableUsers.value[finalIndex];
+                rouletteSpinning.value = false;
+            }
+        }, 100);
     };
 
     const updateTimer = () => {
@@ -869,7 +903,13 @@ createApp({
       closeAddMemberModal,
       addUserToGroup,
       removeUserFromGroup,
-      filterUsersForGroup
+      filterUsersForGroup,
+      // Рулетка
+      rouletteSelectedGroup,
+      rouletteWinner,
+      rouletteSpinning,
+      rouletteAvailableUsers,
+      spinRoulette
     };
   },
 }).mount("#app");

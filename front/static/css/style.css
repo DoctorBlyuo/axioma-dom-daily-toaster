@@ -1405,3 +1405,206 @@ body {
     padding-top: 4px;
   }
 }
+
+/* Рулетка */
+.roulette-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(10px);
+}
+
+.roulette-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.roulette-header h1 {
+    font-size: 32px;
+    margin-bottom: 5px;
+}
+
+.roulette-header p {
+    opacity: 0.9;
+    font-size: 14px;
+}
+
+.roulette-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    gap: 30px;
+}
+
+.roulette-settings {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+.roulette-group-select {
+    width: 100%;
+    max-width: 300px;
+}
+
+.roulette-group-select label {
+    display: block;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.roulette-group-select select {
+    width: 100%;
+    padding: 10px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background: white;
+    transition: all 0.3s;
+}
+
+.roulette-group-select select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.roulette-stats {
+    font-size: 16px;
+    color: #667eea;
+    font-weight: bold;
+}
+
+.roulette-spin-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.roulette-spin-btn:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.roulette-spin-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.roulette-result {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 250px;
+}
+
+.roulette-winner-animation {
+    text-align: center;
+    padding: 30px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 20px;
+    animation: winnerPop 0.6s ease-out;
+    width: 100%;
+    max-width: 500px;
+}
+
+@keyframes winnerPop {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.winner-icon {
+    font-size: 64px;
+    margin-bottom: 15px;
+    animation: iconBounce 0.8s ease-in-out infinite;
+}
+
+@keyframes iconBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.winner-name {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+    word-break: break-word;
+}
+
+.winner-status {
+    font-size: 16px;
+    padding: 6px 20px;
+    border-radius: 30px;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.winner-status.status-active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.winner-status.status-inactive {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.winner-groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.roulette-empty {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+}
+
+@media (max-width: 768px) {
+    .roulette-body {
+        padding: 20px;
+    }
+
+    .winner-name {
+        font-size: 24px;
+    }
+
+    .roulette-spin-btn {
+        padding: 12px 30px;
+        font-size: 18px;
+    }
+}

@@ -21,6 +21,13 @@
                 </button>
                 <button
                         class="tab-btn"
+                        :class="{ active: activeTab === 'roulette' }"
+                        @click="activeTab = 'roulette'"
+                >
+                    🎲 Рулетка
+                </button>
+                <button
+                        class="tab-btn"
                         :class="{ active: activeTab === 'admin' }"
                         @click="activeTab = 'admin'"
                 >
@@ -185,6 +192,57 @@
                             <div class="empty-icon">📭</div>
                             <div>Нет пользователей в очереди</div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Рулетка -->
+        <div class="tab-content" :class="{ active: activeTab === 'roulette' }">
+            <div class="roulette-card">
+                <div class="roulette-header">
+                    <h1>🎲 Лес рук</h1>
+                    <p>Случайный выбор пользователя</p>
+                </div>
+                <div class="roulette-body">
+                    <div class="roulette-settings">
+                        <div class="roulette-group-select">
+                            <label>Выберите группу:</label>
+                            <select v-model="rouletteSelectedGroup">
+                                <option :value="null">📋 Все пользователи</option>
+                                <option v-for="group in groups" :key="group.id" :value="group.id">
+                                    🏷️ {{ group.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="roulette-stats">
+                            <span>👥 Доступно: {{ rouletteAvailableUsers.length }} человек</span>
+                        </div>
+                        <button class="roulette-spin-btn" @click="spinRoulette" :disabled="rouletteAvailableUsers.length === 0 || rouletteSpinning">
+                            🎲 Крутить!
+                        </button>
+                    </div>
+
+                    <div class="roulette-result" v-if="rouletteWinner">
+                        <div class="roulette-winner-animation" :class="{ 'winner-appear': rouletteWinner }">
+                            <div class="winner-icon">🏆</div>
+                            <div class="winner-name">{{ rouletteWinner.surname }} {{ rouletteWinner.name }} {{ rouletteWinner.patronymic }}</div>
+                            <div class="winner-status"
+                                 :class="{ 'status-active': rouletteWinner.status === 'Активен', 'status-inactive': rouletteWinner.status !== 'Активен' }">
+                                {{ rouletteWinner.status }}
+                            </div>
+                            <div class="winner-groups" v-if="rouletteWinner.groups && rouletteWinner.groups.length">
+                        <span v-for="groupId in rouletteWinner.groups" :key="groupId"
+                              class="user-group-badge" :style="{ backgroundColor: getGroupColor(groupId) }">
+                            {{ getGroupName(groupId) }}
+                        </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="roulette-empty" v-else-if="!rouletteWinner && rouletteAvailableUsers.length === 0">
+                        <div class="empty-icon">📭</div>
+                        <div>Нет пользователей для выбора</div>
                     </div>
                 </div>
             </div>

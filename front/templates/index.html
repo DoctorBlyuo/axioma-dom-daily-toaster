@@ -215,7 +215,7 @@
                     </div>
                 </div>
 
-                <!-- Главный спиннер -->
+                <!-- Главный спиннер - увеличенный -->
                 <div class="game-spinner-area">
                     <div class="spinner-wrapper" :class="{ 'spinning': rouletteSpinning }">
                         <div class="wheel-of-fortune">
@@ -270,12 +270,6 @@
                         </div>
                     </div>
 
-                    <div class="empty-area" v-else-if="!rouletteWinner && !rouletteSpinning && rouletteFinalUsersList.length === 0">
-                        <div class="empty-message">
-                            <div class="empty-icon">📭</div>
-                            <div>Выберите участников слева</div>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Кнопка Крутить! -->

@@ -879,6 +879,18 @@ createApp({
       });
     };
 
+        // Внутри setup() добавьте:
+    const showUsersPanel = ref(true);
+    const showGroupsPanel = ref(true);
+
+    const toggleUsersPanel = () => {
+        showUsersPanel.value = !showUsersPanel.value;
+    };
+
+    const toggleGroupsPanel = () => {
+        showGroupsPanel.value = !showGroupsPanel.value;
+    };
+
         // Выбрать всех пользователей
     const selectAllUsers = computed({
         get: () => {
@@ -1061,6 +1073,10 @@ createApp({
         selectAllGroups,
     toggleAllUsers,
     toggleAllGroups,
+        showUsersPanel,
+    showGroupsPanel,
+    toggleUsersPanel,
+    toggleGroupsPanel,
       clearRouletteSelection
     };
   },

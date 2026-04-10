@@ -601,157 +601,226 @@ body {
 }
 
 /* Группы */
+/* Группы - исправление горизонтального скролла */
 .groups-container {
-  max-height: calc(100vh - 200px);
-  overflow-y: auto;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .groups-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
 }
 
 .group-card {
-  background: #f8f9fa;
-  border-radius: 12px;
-  border-left: 4px solid;
-  overflow: hidden;
-  transition: all 0.3s;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border-left: 4px solid;
+    overflow: hidden;
+    transition: all 0.3s;
+    width: 100%;
 }
 
 .group-card:hover {
-  transform: translateX(5px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .group-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px;
-  background: white;
-  border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: white;
+    border-bottom: 1px solid #e9ecef;
+    width: 100%;
 }
 
 .group-info {
-  flex: 1;
+    flex: 1;
+    min-width: 0;
 }
 
 .group-name {
-  font-weight: bold;
-  font-size: 18px;
-  margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 5px;
+    word-break: break-word;
 }
 
 .group-id {
-  font-size: 11px;
-  color: #999;
+    font-size: 11px;
+    color: #999;
 }
 
 .group-actions {
-  display: flex;
-  gap: 8px;
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
 }
 
 .group-members {
-  padding: 15px;
+    padding: 15px;
+    width: 100%;
 }
 
 .group-members-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-  font-weight: bold;
-  color: #555;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-weight: bold;
+    color: #555;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .add-member-btn {
-  background: #28a745;
-  color: white;
-  border: none;
-  padding: 4px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12px;
-  transition: all 0.2s;
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 4px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+    white-space: nowrap;
 }
 
 .add-member-btn:hover {
-  background: #218838;
-  transform: translateY(-1px);
+    background: #218838;
+    transform: translateY(-1px);
 }
 
 .group-members-list {
-  max-height: 200px;
-  overflow-y: auto;
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .group-member-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 10px;
-  background: white;
-  border-radius: 8px;
-  margin-bottom: 6px;
-  border: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    border: 1px solid #e9ecef;
+    width: 100%;
 }
 
 .member-name {
-  font-size: 14px;
-  color: #333;
+    font-size: 14px;
+    color: #333;
+    word-break: break-word;
+    flex: 1;
+    padding-right: 10px;
 }
 
 .remove-member-btn {
-  background: #dc3545;
-  color: white;
-  border: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
+    background: #dc3545;
+    color: white;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
 }
 
 .remove-member-btn:hover {
-  background: #c82333;
-  transform: scale(1.1);
+    background: #c82333;
+    transform: scale(1.1);
 }
 
 .empty-members {
-  text-align: center;
-  padding: 20px;
-  color: #999;
-  font-size: 13px;
+    text-align: center;
+    padding: 20px;
+    color: #999;
+    font-size: 13px;
+}
+
+/* Адаптивность для групп */
+@media (max-width: 768px) {
+    .group-members-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .group-name {
+        font-size: 16px;
+    }
+
+    .member-name {
+        font-size: 12px;
+    }
+
+    .group-card-header {
+        padding: 12px;
+    }
+
+    .group-members {
+        padding: 12px;
+    }
+}
+.app-content {
+    padding: 12px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: auto;
+    overflow-x: hidden;
+}
+
+.users-list {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 8px;
+    min-height: 0;
 }
 
 /* Модалка добавления участника */
+/* Модалка добавления участника */
 .available-users-list {
-  max-height: 400px;
-  overflow-y: auto;
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .available-user-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  margin-bottom: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
 }
 
-.available-user-item:hover {
-  background: #e0e7ff;
-  transform: translateX(5px);
+.available-user-item .user-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.available-user-item .user-name {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 4px;
+    word-break: break-word;
 }
 
 .available-user-item .user-info {

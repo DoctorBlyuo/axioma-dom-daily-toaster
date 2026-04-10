@@ -70,6 +70,57 @@ def unauthorized():
 def index():
     return send_from_directory('../front/templates', 'index.html')
 
+@app.route('/api/groups', methods=['GET'])
+@auth.login_required
+def get_groups():
+    config = load_full_config()
+    return jsonify(config.get('groups', []))
+
+@app.route('/api/groups', methods=['POST'])
+@auth.login_required
+def create_group():
+    config = load_full_config()
+    groups = config.get('groups', [])
+    new_group = request.json
+    # Генерируем новый ID
+    max_id = max([g.get('id', 0) for g in groups]) if groups else 0
+    new_group['id'] = max_id + 1
+    groups.append(new_group)
+    config['groups'] = groups
+    save_full_config(config)
+    return jsonify(new_group), 201
+
+@app.route('/api/groups/<int:group_id>', methods=['PUT'])
+@auth.login_required
+def update_group(group_id):
+    config = load_full_config()
+    groups = config.get('groups', [])
+    updated_group = request.json
+    for i, g in enumerate(groups):
+        if g.get('id') == group_id:
+            updated_group['id'] = group_id
+            groups[i] = updated_group
+            break
+    config['groups'] = groups
+    save_full_config(config)
+    return jsonify(updated_group)
+
+@app.route('/api/groups/<int:group_id>', methods=['DELETE'])
+@auth.login_required
+def delete_group(group_id):
+    config = load_full_config()
+    groups = config.get('groups', [])
+    # Удаляем группу у всех пользователей
+    users = config.get('users', [])
+    for user in users:
+        if 'groups' in user and group_id in user['groups']:
+            user['groups'].remove(group_id)
+    # Удаляем саму группу
+    config['groups'] = [g for g in groups if g.get('id') != group_id]
+    config['users'] = users
+    save_full_config(config)
+    return jsonify({'ok': True})
+
 @app.route('/main.js')
 @auth.login_required
 def main_js():

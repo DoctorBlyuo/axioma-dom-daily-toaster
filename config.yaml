@@ -18,19 +18,21 @@ groups:
   id: 6
   name: Менеджеры
 jira:
-  url: "https://oneproject.it-one.ru/jira/secure/RapidBoard.jspa?rapidView=327"
-  origin: "https://oneproject.it-one.ru"
-  board_name: "Daily Toaster Board"
+  board_name: Daily Toaster Board
+  origin: https://oneproject.it-one.ru
+  url: https://oneproject.it-one.ru/jira/secure/RapidBoard.jspa?rapidView=327
 users:
-- name: Margarita
-  patronymic: null
+- groups: []
+  name: Margarita
+  patronymic: ''
   status: Активен
   surname: Zhivotovskaya
 - name: Alexey
   patronymic: null
   status: Активен
   surname: Vasiliev
-- name: Valeriy
+- groups: []
+  name: Valeriy
   patronymic: null
   status: Активен
   surname: Sukhorukov
@@ -62,7 +64,8 @@ users:
   patronymic: null
   status: Активен
   surname: Markina
-- name: Sergey
+- groups: []
+  name: Sergey
   patronymic: null
   status: Активен
   surname: Lukayanov
@@ -70,15 +73,20 @@ users:
   patronymic: null
   status: Активен
   surname: Khalibulov
-- name: Aleksei
+- groups:
+  - 3
+  name: Aleksei
   patronymic: null
   status: Активен
   surname: Korolkov
-- name: Alina
+- groups:
+  - 3
+  name: Alina
   patronymic: null
   status: Активен
   surname: Kobzar
-- name: Rustam
+- groups: []
+  name: Rustam
   patronymic: null
   status: Активен
   surname: Karsakov
@@ -110,7 +118,8 @@ users:
   patronymic: null
   status: Активен
   surname: Schastnyi
-- name: Ivan
+- groups: []
+  name: Ivan
   patronymic: null
   status: Активен
   surname: Nomokonov

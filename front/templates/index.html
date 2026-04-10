@@ -196,142 +196,159 @@
                 <div class="app-header">
                     <h1>
                         <a href="/static/jira-helper/daily_jira_script_for_tampermonkey.user.js"
-                           class="helper-link" title="Скачать скрипт daily_jira_script_for_tampermonkey.user.js">⚙️</a> Управление пользователями</h1>
-                    <p>Добавление, редактирование и удаление</p>
+                           class="helper-link" title="Скачать скрипт daily_jira_script_for_tampermonkey.user.js">⚙️</a>
+                        Администрирование
+                    </h1>
+                    <p>Управление пользователями и группами</p>
                 </div>
                 <div class="app-content">
-                    <div class="header-actions">
-                        <h2>Пользователи</h2>
-                        <div style="display: flex; gap: 10px;">
-                            <button class="add-button" @click="openAddModal">
-                                ➕ Добавить пользователя
-                            </button>
-                            <button class="jira-settings-btn" @click="openJiraModal">🔧 Настройки Jira</button>
-                            <button class="add-button" style="background-color: #4a5568;" @click="downloadConfig">
-                                💾 Скачать конфиг
-                            </button>
-                            <button class="add-button" style="background-color: #17a2b8;" @click="openUploadModal">
-                                📂 Загрузить конфиг
-                            </button>
-                        </div>
+                    <!-- Подвкладки -->
+                    <div class="sub-tabs">
+                        <button class="sub-tab-btn" :class="{ active: adminSubTab === 'users' }" @click="adminSubTab = 'users'">
+                            👥 Пользователи
+                        </button>
+                        <button class="sub-tab-btn" :class="{ active: adminSubTab === 'groups' }" @click="adminSubTab = 'groups'">
+                            🏷️ Группы
+                        </button>
                     </div>
 
-                    <div class="lists-row">
-                        <div class="list-col">
-                            <div class="user-card">
-                                <div class="card-header-active">
-                                    ✅ Активные
-                                    <span class="user-count">{{ activeUsers.length }}</span>
-                                </div>
-                                <div
-                                        class="users-list"
-                                        @dragover.prevent="onDragOver"
-                                        @drop.prevent="onDrop($event, 'active')"
-                                >
-                                    <div
-                                            v-for="user in activeUsers"
-                                            :key="user.id"
-                                            class="user-item"
-                                            draggable="true"
-                                            @dragstart="onDragStart($event, user, 'active')"
-                                            @dragend="onDragEnd"
-                                    >
-                                        <div class="user-info">
-                                            <div class="user-fullname">
-                                                {{ user.surname }} {{ user.name }} {{
-                                                user.patronymic }}
+                    <!-- Управление пользователями -->
+                    <div class="sub-tab-content" :class="{ active: adminSubTab === 'users' }">
+                        <div class="header-actions">
+                            <h2>Пользователи</h2>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="add-button" @click="openAddModal">
+                                    ➕ Добавить пользователя
+                                </button>
+                                <button class="jira-settings-btn" @click="openJiraModal">🔧 Настройки Jira</button>
+                                <button class="add-button" style="background-color: #4a5568;" @click="downloadConfig">
+                                    💾 Скачать конфиг
+                                </button>
+                                <button class="add-button" style="background-color: #17a2b8;" @click="openUploadModal">
+                                    📂 Загрузить конфиг
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="lists-row">
+                            <div class="list-col">
+                                <div class="user-card">
+                                    <div class="card-header-active">
+                                        ✅ Активные
+                                        <span class="user-count">{{ activeUsers.length }}</span>
+                                    </div>
+                                    <div class="users-list" @dragover.prevent="onDragOver" @drop.prevent="onDrop($event, 'active')">
+                                        <div v-for="user in activeUsers" :key="user.id" class="user-item" draggable="true"
+                                             @dragstart="onDragStart($event, user, 'active')" @dragend="onDragEnd">
+                                            <div class="user-info">
+                                                <div class="user-fullname">{{ user.surname }} {{ user.name }} {{ user.patronymic }}</div>
+                                                <div class="user-groups">
+                                                    <span v-for="groupId in user.groups" :key="groupId"
+                                                          class="user-group-badge" :style="{ backgroundColor: getGroupColor(groupId) }">
+                                                        {{ getGroupName(groupId) }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="user-actions">
+                                                <select class="status-select" :value="user.status" @change="changeStatus(user, $event.target.value)"
+                                                        @click.stop>
+                                                    <option value="Активен">Активен</option>
+                                                    <option value="В отпуске">В отпуске</option>
+                                                    <option value="Болеет">Болеет</option>
+                                                </select>
+                                                <button class="edit-btn" @click.stop="openEditModal(user)">✏️</button>
+                                                <button class="delete-btn" @click.stop="openDeleteModal(user)">🗑️</button>
                                             </div>
                                         </div>
-                                        <div class="user-actions">
-                                            <select
-                                                    class="status-select"
-                                                    :value="user.status"
-                                                    @change="changeStatus(user, $event.target.value)"
-                                                    @click.stop
-                                            >
-                                                <option value="Активен">Активен</option>
-                                                <option value="В отпуске">В отпуске</option>
-                                                <option value="Болеет">Болеет</option>
-                                            </select>
-                                            <button
-                                                    class="edit-btn"
-                                                    @click.stop="openEditModal(user)"
-                                            >
-                                                ✏️
-                                            </button>
-                                            <button
-                                                    class="delete-btn"
-                                                    @click.stop="openDeleteModal(user)"
-                                            >
-                                                🗑️
-                                            </button>
+                                        <div v-if="activeUsers.length === 0" class="empty-state">
+                                            <div class="empty-icon">📭</div>
+                                            <div>Нет активных пользователей</div>
                                         </div>
                                     </div>
-                                    <div v-if="activeUsers.length === 0" class="empty-state">
-                                        <div class="empty-icon">📭</div>
-                                        <div>Нет активных пользователей</div>
+                                </div>
+                            </div>
+
+                            <div class="list-col">
+                                <div class="user-card">
+                                    <div class="card-header-inactive">
+                                        ⏰ Неактивные
+                                        <span class="user-count">{{ inactiveUsers.length }}</span>
+                                    </div>
+                                    <div class="users-list" @dragover.prevent="onDragOver" @drop.prevent="onDrop($event, 'inactive')">
+                                        <div v-for="user in inactiveUsers" :key="user.id" class="user-item" draggable="true"
+                                             @dragstart="onDragStart($event, user, 'inactive')" @dragend="onDragEnd">
+                                            <div class="user-info">
+                                                <div class="user-fullname">{{ user.surname }} {{ user.name }} {{ user.patronymic }}</div>
+                                                <div class="user-groups">
+                                                    <span v-for="groupId in user.groups" :key="groupId"
+                                                          class="user-group-badge" :style="{ backgroundColor: getGroupColor(groupId) }">
+                                                        {{ getGroupName(groupId) }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="user-actions">
+                                                <select class="status-select" :value="user.status" @change="changeStatus(user, $event.target.value)"
+                                                        @click.stop>
+                                                    <option value="Активен">Активен</option>
+                                                    <option value="В отпуске">В отпуске</option>
+                                                    <option value="Болеет">Болеет</option>
+                                                </select>
+                                                <button class="edit-btn" @click.stop="openEditModal(user)">✏️</button>
+                                                <button class="delete-btn" @click.stop="openDeleteModal(user)">🗑️</button>
+                                            </div>
+                                        </div>
+                                        <div v-if="inactiveUsers.length === 0" class="empty-state">
+                                            <div class="empty-icon">📭</div>
+                                            <div>Нет неактивных пользователей</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="list-col">
-                            <div class="user-card">
-                                <div class="card-header-inactive">
-                                    ⏰ Неактивные
-                                    <span class="user-count">{{ inactiveUsers.length }}</span>
-                                </div>
-                                <div
-                                        class="users-list"
-                                        @dragover.prevent="onDragOver"
-                                        @drop.prevent="onDrop($event, 'inactive')"
-                                >
-                                    <div
-                                            v-for="user in inactiveUsers"
-                                            :key="user.id"
-                                            class="user-item"
-                                            draggable="true"
-                                            @dragstart="onDragStart($event, user, 'inactive')"
-                                            @dragend="onDragEnd"
-                                    >
-                                        <div class="user-info">
-                                            <div class="user-fullname">
-                                                {{ user.surname }} {{ user.name }} {{
-                                                user.patronymic }}
+                    <!-- Управление группами -->
+                    <div class="sub-tab-content" :class="{ active: adminSubTab === 'groups' }">
+                        <div class="header-actions">
+                            <h2>Группы</h2>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="add-button" @click="openAddGroupModal">➕ Добавить группу</button>
+                                <button class="jira-settings-btn" @click="openJiraModal">🔧 Настройки Jira</button>
+                            </div>
+                        </div>
+                        <div class="groups-container">
+                            <div class="groups-list">
+                                <div v-for="group in groups" :key="group.id" class="group-card" :style="{ borderLeftColor: group.color }">
+                                    <div class="group-card-header">
+                                        <div class="group-info">
+                                            <div class="group-name" :style="{ color: group.color }">{{ group.name }}</div>
+                                            <div class="group-id">ID: {{ group.id }}</div>
+                                        </div>
+                                        <div class="group-actions">
+                                            <button class="edit-btn" @click="openEditGroupModal(group)">✏️</button>
+                                            <button class="delete-btn" @click="openDeleteGroupModal(group)">🗑️</button>
+                                        </div>
+                                    </div>
+                                    <div class="group-members">
+                                        <div class="group-members-header">
+                                            <span>👥 Участники ({{ getGroupUsers(group.id).length }})</span>
+                                            <button class="add-member-btn" @click="openAddMemberModal(group)">➕ Добавить участника</button>
+                                        </div>
+                                        <div class="group-members-list">
+                                            <div v-for="user in getGroupUsers(group.id)" :key="user.id" class="group-member-item">
+                                                <span class="member-name">{{ user.surname }} {{ user.name }} {{ user.patronymic }}</span>
+                                                <button class="remove-member-btn" @click="removeUserFromGroup(user, group.id)" title="Удалить из группы">✖
+                                                </button>
+                                            </div>
+                                            <div v-if="getGroupUsers(group.id).length === 0" class="empty-members">
+                                                Нет участников
                                             </div>
                                         </div>
-                                        <div class="user-actions">
-                                            <select
-                                                    class="status-select"
-                                                    :value="user.status"
-                                                    @change="changeStatus(user, $event.target.value)"
-                                                    @click.stop
-                                            >
-                                                <option value="Активен">Активен</option>
-                                                <option value="В отпуске">В отпуске</option>
-                                                <option value="Болеет">Болеет</option>
-                                            </select>
-                                            <button
-                                                    class="edit-btn"
-                                                    @click.stop="openEditModal(user)"
-                                            >
-                                                ✏️
-                                            </button>
-                                            <button
-                                                    class="delete-btn"
-                                                    @click.stop="openDeleteModal(user)"
-                                            >
-                                                🗑️
-                                            </button>
-                                        </div>
                                     </div>
-                                    <div
-                                            v-if="inactiveUsers.length === 0"
-                                            class="empty-state"
-                                    >
-                                        <div class="empty-icon">📭</div>
-                                        <div>Нет неактивных пользователей</div>
-                                    </div>
+                                </div>
+                                <div v-if="groups.length === 0" class="empty-state">
+                                    <div class="empty-icon">📭</div>
+                                    <div>Нет групп</div>
                                 </div>
                             </div>
                         </div>
@@ -341,34 +358,23 @@
         </div>
     </div>
 
-    <!-- Модалка добавления/редактирования -->
+    <!-- Модалка добавления/редактирования пользователя -->
+    <!-- Модалка добавления/редактирования пользователя -->
     <div id="userModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">{{ modalTitle }}</div>
             <div class="modal-body">
                 <div class="form-group">
                     <label>Фамилия</label>
-                    <input
-                            type="text"
-                            v-model="form.surname"
-                            placeholder="Введите фамилию"
-                    />
+                    <input type="text" v-model="form.surname" placeholder="Введите фамилию"/>
                 </div>
                 <div class="form-group">
                     <label>Имя</label>
-                    <input
-                            type="text"
-                            v-model="form.name"
-                            placeholder="Введите имя"
-                    />
+                    <input type="text" v-model="form.name" placeholder="Введите имя"/>
                 </div>
                 <div class="form-group">
                     <label>Отчество</label>
-                    <input
-                            type="text"
-                            v-model="form.patronymic"
-                            placeholder="Введите отчество"
-                    />
+                    <input type="text" v-model="form.patronymic" placeholder="Введите отчество"/>
                 </div>
                 <div class="form-group">
                     <label>Статус</label>
@@ -378,41 +384,35 @@
                         <option value="Болеет">Болеет</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label>Группы</label>
+                    <div class="groups-checkboxes">
+                        <label v-for="group in groups" :key="group.id" class="group-checkbox">
+                            <input type="checkbox" :value="group.id" v-model="form.groups">
+                            <span :style="{ color: group.color }">{{ group.name }}</span>
+                        </label>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
-                <button class="modal-btn modal-btn-secondary" @click="closeModal">
-                    Отмена
-                </button>
-                <button class="modal-btn modal-btn-primary" @click="saveUser">
-                    Сохранить
-                </button>
+                <button class="modal-btn modal-btn-secondary" @click="closeModal">Отмена</button>
+                <button class="modal-btn modal-btn-primary" @click="saveUser">Сохранить</button>
             </div>
         </div>
     </div>
 
-    <!-- Модалка удаления -->
+    <!-- Модалка удаления пользователя -->
     <div id="deleteModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">Удалить пользователя</div>
             <div class="modal-body">
-                <p>
-                    Вы уверены, что хотите удалить пользователя
-                    <strong
-                    >{{ deleteUser?.surname }} {{ deleteUser?.name }} {{
-                        deleteUser?.patronymic }}</strong
-                    >?
+                <p>Вы уверены, что хотите удалить пользователя
+                    <strong>{{ deleteUser?.surname }} {{ deleteUser?.name }} {{ deleteUser?.patronymic }}</strong>?
                 </p>
             </div>
             <div class="modal-footer">
-                <button
-                        class="modal-btn modal-btn-secondary"
-                        @click="closeDeleteModal"
-                >
-                    Отмена
-                </button>
-                <button class="modal-btn modal-btn-danger" @click="confirmDelete">
-                    Удалить
-                </button>
+                <button class="modal-btn modal-btn-secondary" @click="closeDeleteModal">Отмена</button>
+                <button class="modal-btn modal-btn-danger" @click="confirmDelete">Удалить</button>
             </div>
         </div>
     </div>
@@ -433,12 +433,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="modal-btn modal-btn-secondary" @click="closeUploadModal">
-                    Отмена
-                </button>
-                <button class="modal-btn modal-btn-primary" @click="uploadConfig" :disabled="!selectedFile">
-                    Загрузить и применить
-                </button>
+                <button class="modal-btn modal-btn-secondary" @click="closeUploadModal">Отмена</button>
+                <button class="modal-btn modal-btn-primary" @click="uploadConfig" :disabled="!selectedFile">Загрузить и применить</button>
             </div>
         </div>
     </div>
@@ -463,15 +459,80 @@
                 <div class="jira-test-section">
                     <button class="test-jira-btn" @click="testJiraConnection">🔗 Проверить подключение</button>
                     <div class="test-result" v-if="testResult">
-                        <span :class="testResult.success ? 'success' : 'error'">
-                            {{ testResult.message }}
-                        </span>
+                        <span :class="testResult.success ? 'success' : 'error'">{{ testResult.message }}</span>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="modal-btn modal-btn-secondary" @click="closeJiraModal">Отмена</button>
                 <button class="modal-btn modal-btn-primary" @click="saveJiraConfig">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка добавления/редактирования группы -->
+    <div id="groupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">{{ groupModalTitle }}</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Название группы</label>
+                    <input type="text" v-model="groupForm.name" placeholder="Введите название группы">
+                </div>
+                <div class="form-group">
+                    <label>Цвет группы</label>
+                    <input type="color" v-model="groupForm.color" style="width: 100%; height: 40px;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" @click="closeGroupModal">Отмена</button>
+                <button class="modal-btn modal-btn-primary" @click="saveGroup">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка удаления группы -->
+    <div id="deleteGroupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Удалить группу</div>
+            <div class="modal-body">
+                <p>Вы уверены, что хотите удалить группу <strong>{{ deleteGroup?.name }}</strong>?</p>
+                <p style="color: #dc3545; margin-top: 10px;">Внимание! Пользователи, состоящие в этой группе, потеряют членство в ней.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" @click="closeDeleteGroupModal">Отмена</button>
+                <button class="modal-btn modal-btn-danger" @click="confirmDeleteGroup">Удалить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка добавления участника в группу -->
+    <div id="addMemberModal" class="modal">
+        <div class="modal-content modal-medium">
+            <div class="modal-header">👥 Добавить участника в группу <strong>{{ selectedGroup?.name }}</strong></div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Поиск пользователя:</label>
+                    <input type="text" v-model="memberSearchQuery" @input="filterUsersForGroup" placeholder="Введите имя или фамилию...">
+                </div>
+                <div class="available-users-list">
+                    <div v-for="user in filteredAvailableUsers" :key="user.id" class="available-user-item" @click="addUserToGroup(user)">
+                        <div class="user-info">
+                            <div class="user-name">{{ user.surname }} {{ user.name }} {{ user.patronymic }}</div>
+                            <div class="user-status" :class="{ 'status-active': user.status === 'Активен', 'status-inactive': user.status !== 'Активен' }">
+                                {{ user.status }}
+                            </div>
+                        </div>
+                        <button class="add-to-group-btn">➕ Добавить</button>
+                    </div>
+                    <div v-if="filteredAvailableUsers.length === 0" class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <div>Нет доступных пользователей</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" @click="closeAddMemberModal">Закрыть</button>
             </div>
         </div>
     </div>

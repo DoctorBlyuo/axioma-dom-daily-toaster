@@ -791,7 +791,7 @@ body {
 }
 
 /* Модалка добавления участника */
-/* Модалка добавления участника */
+
 .available-users-list {
     max-height: 400px;
     overflow-y: auto;
@@ -1895,3 +1895,4 @@ body {
         height: 50px;
     }
 }
+

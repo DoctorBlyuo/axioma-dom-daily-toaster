@@ -14,8 +14,7 @@ createApp({
     // Jira конфиг
     const jiraConfig = ref({
         url: '',
-        origin: '',
-        board_name: ''
+        origin: ''
     });
     const testResult = ref(null);
 
@@ -87,7 +86,10 @@ createApp({
         try {
             const res = await fetch('/api/config');
             const config = await res.json();
-            jiraConfig.value = config;
+            jiraConfig.value = {
+                url: config.url || '',
+                origin: config.origin || ''
+            };
             initJiraWindow();
         } catch (error) {
             console.error('Ошибка загрузки конфига Jira:', error);
@@ -129,7 +131,10 @@ createApp({
             const res = await fetch('/api/config', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(jiraConfig.value)
+                body: JSON.stringify({
+                    url: jiraConfig.value.url,
+                    origin: jiraConfig.value.origin
+                })
             });
             if (res.ok) {
                 closeJiraModal();
@@ -298,13 +303,25 @@ createApp({
         }
 
         try {
+            // Проверяем, существует ли группа с таким именем (при создании)
+            if (!groupForm.value.id) {
+                const existingGroup = groups.value.find(g => g.name.toLowerCase() === groupForm.value.name.toLowerCase());
+                if (existingGroup) {
+                    alert('Группа с таким названием уже существует!');
+                    return;
+                }
+            }
+
             const method = groupForm.value.id ? 'PUT' : 'POST';
             const url = groupForm.value.id ? `/api/groups/${groupForm.value.id}` : '/api/groups';
 
             const res = await fetch(url, {
                 method,
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(groupForm.value)
+                body: JSON.stringify({
+                    name: groupForm.value.name,
+                    color: groupForm.value.color
+                })
             });
 
             if (res.ok) {
@@ -313,7 +330,8 @@ createApp({
                 await loadUsers();
                 alert('Группа сохранена!');
             } else {
-                alert('Ошибка при сохранении группы');
+                const error = await res.json();
+                alert('Ошибка при сохранении группы: ' + (error.message || 'Неизвестная ошибка'));
             }
         } catch (error) {
             console.error('Ошибка:', error);
@@ -335,27 +353,48 @@ createApp({
         if (!deleteGroup.value) return;
 
         try {
-            const res = await fetch(`/api/groups/${deleteGroup.value.id}`, {
+            // Загружаем актуальных пользователей
+            const usersRes = await fetch("/api/users");
+            const currentUsers = await usersRes.json();
+
+            // Удаляем группу у всех пользователей
+            const updatedUsers = currentUsers.map(user => {
+                if (user.groups && user.groups.includes(deleteGroup.value.id)) {
+                    return {
+                        ...user,
+                        groups: user.groups.filter(g => g !== deleteGroup.value.id)
+                    };
+                }
+                return user;
+            });
+
+            // Сохраняем обновленных пользователей
+            const saveUsersRes = await fetch("/api/users", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updatedUsers)
+            });
+
+            if (!saveUsersRes.ok) {
+                throw new Error('Ошибка при обновлении пользователей');
+            }
+
+            // Удаляем саму группу
+            const deleteGroupRes = await fetch(`/api/groups/${deleteGroup.value.id}`, {
                 method: 'DELETE'
             });
 
-            if (res.ok) {
+            if (deleteGroupRes.ok) {
                 closeDeleteGroupModal();
-                const allUsers = [...activeUsers.value, ...inactiveUsers.value];
-                allUsers.forEach(user => {
-                    if (user.groups && user.groups.includes(deleteGroup.value.id)) {
-                        user.groups = user.groups.filter(g => g !== deleteGroup.value.id);
-                    }
-                });
-                await saveToBackend();
                 await loadGroups();
+                await loadUsers();
                 alert('Группа удалена!');
             } else {
-                alert('Ошибка при удалении группы');
+                throw new Error('Ошибка при удалении группы');
             }
         } catch (error) {
             console.error('Ошибка:', error);
-            alert('Ошибка при удалении группы');
+            alert('Ошибка при удалении группы: ' + error.message);
         }
     };
 

@@ -17,11 +17,7 @@ groups:
 - color: '#F44336'
   id: 6
   name: Менеджеры
-- color: '#667eea'
-  id: 7
-  name: тест
 jira:
-  board_name: Daily Toaster Board
   origin: https://oneproject.it-one.ru
   url: https://oneproject.it-one.ru/jira/secure/RapidBoard.jspa?rapidView=327
 users:
@@ -40,8 +36,12 @@ users:
   patronymic: null
   status: Активен
   surname: Sukhorukov
-- name: Elizaveta
-  patronymic: null
+- groups:
+  - 3
+  - 6
+  - 5
+  name: Elizaveta
+  patronymic: ''
   status: Активен
   surname: Starovoitova
 - groups:

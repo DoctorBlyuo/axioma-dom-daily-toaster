@@ -105,20 +105,24 @@ def update_group(group_id):
     save_full_config(config)
     return jsonify(updated_group)
 
+
 @app.route('/api/groups/<int:group_id>', methods=['DELETE'])
 @auth.login_required
 def delete_group(group_id):
     config = load_full_config()
     groups = config.get('groups', [])
-    # Удаляем группу у всех пользователей
     users = config.get('users', [])
+
+    # Удаляем группу у всех пользователей
     for user in users:
         if 'groups' in user and group_id in user['groups']:
             user['groups'].remove(group_id)
+
     # Удаляем саму группу
     config['groups'] = [g for g in groups if g.get('id') != group_id]
     config['users'] = users
     save_full_config(config)
+
     return jsonify({'ok': True})
 
 @app.route('/main.js')

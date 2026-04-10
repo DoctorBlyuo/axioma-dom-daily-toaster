@@ -198,33 +198,79 @@
         </div>
 
         <!-- Рулетка -->
-        <!-- Рулетка -->
         <div class="tab-content" :class="{ active: activeTab === 'roulette' }">
             <div class="roulette-card">
                 <div class="roulette-header">
                     <h1>🎲 Кто сегодня?</h1>
                     <p>Случайный выбор пользователя</p>
                 </div>
-                <div class="roulette-body">
-                    <div class="roulette-settings">
-                        <div class="roulette-group-select">
-                            <label>Выберите группу:</label>
-                            <select v-model="rouletteSelectedGroup" @change="resetRoulette">
-                                <option :value="null">📋 Все пользователи</option>
-                                <option v-for="group in groups" :key="group.id" :value="group.id">
-                                    🏷️ {{ group.name }}
-                                </option>
-                            </select>
+                <div class="roulette-layout">
+                    <!-- Левая колонка - список пользователей -->
+                    <div class="roulette-users-panel">
+                        <div class="panel-header">
+                            <h3>👥 Пользователи</h3>
+                            <label class="select-all-checkbox">
+                                <input type="checkbox" v-model="selectAllUsers" @change="toggleAllUsers">
+                                <span>Выбрать всех</span>
+                            </label>
                         </div>
-                        <div class="roulette-stats">
-                            <span>👥 Доступно: {{ rouletteAvailableUsers.length }} человек</span>
+                        <div class="panel-list users-list-scroll">
+                            <label v-for="user in activeUsers" :key="user.id" class="user-checkbox">
+                                <input type="checkbox" :value="user.id" v-model="rouletteSelectedUsers">
+                                <span class="user-name">{{ user.surname }} {{ user.name }} {{ user.patronymic }}</span>
+                                <span class="user-status-badge" :class="{ 'status-active': user.status === 'Активен' }">
+                            {{ user.status === 'Активен' ? '✅' : '⏸️' }}
+                        </span>
+                            </label>
+                            <div v-if="activeUsers.length === 0" class="empty-message">
+                                Нет активных пользователей
+                            </div>
                         </div>
-                        <button class="roulette-spin-btn" @click="spinRoulette" :disabled="rouletteAvailableUsers.length === 0 || rouletteSpinning">
-                            <span v-if="!rouletteSpinning">🎲 Крутить!</span>
-                            <span v-else>🔄 Крутится...</span>
-                        </button>
                     </div>
 
+                    <!-- Правая колонка - группы и управление -->
+                    <div class="roulette-controls-panel">
+                        <!-- Группы -->
+                        <div class="groups-section">
+                            <div class="panel-header">
+                                <h3>🏷️ Группы</h3>
+                                <label class="select-all-checkbox">
+                                    <input type="checkbox" v-model="selectAllGroups" @change="toggleAllGroups">
+                                    <span>Выбрать все</span>
+                                </label>
+                            </div>
+                            <div class="panel-list groups-list-scroll">
+                                <label v-for="group in groups" :key="group.id" class="group-checkbox">
+                                    <input type="checkbox" :value="group.id" v-model="rouletteSelectedGroups">
+                                    <span class="group-name" :style="{ color: group.color }">{{ group.name }}</span>
+                                    <span class="group-count">({{ getGroupUsers(group.id).length }})</span>
+                                </label>
+                                <div v-if="groups.length === 0" class="empty-message">
+                                    Нет групп
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Статистика и кнопка -->
+                        <div class="roulette-action-section">
+                            <div class="stats-info">
+                                <div class="stats-count">
+                                    📊 В списке: <strong>{{ rouletteFinalUsersList.length }}</strong> человек
+                                </div>
+                                <button class="clear-all-btn" @click="clearRouletteSelection" title="Очистить всё">
+                                    🗑️ Очистить всё
+                                </button>
+                            </div>
+                            <button class="roulette-spin-btn" @click="spinRoulette" :disabled="rouletteFinalUsersList.length === 0 || rouletteSpinning">
+                                <span v-if="!rouletteSpinning">🎲 Крутить!</span>
+                                <span v-else>🔄 Крутится...</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Анимация и результат -->
+                <div class="roulette-result-area">
                     <!-- Анимированная рулетка -->
                     <div class="roulette-wheel-container" v-if="rouletteSpinning">
                         <div class="roulette-wheel">
@@ -245,8 +291,7 @@
                         <div class="roulette-winner-animation">
                             <div class="winner-icon">🏆</div>
                             <div class="winner-name">{{ rouletteWinner.surname }} {{ rouletteWinner.name }} {{ rouletteWinner.patronymic }}</div>
-                            <div class="winner-status"
-                                 :class="{ 'status-active': rouletteWinner.status === 'Активен', 'status-inactive': rouletteWinner.status !== 'Активен' }">
+                            <div class="winner-status" :class="{ 'status-active': rouletteWinner.status === 'Активен' }">
                                 {{ rouletteWinner.status }}
                             </div>
                             <div class="winner-groups" v-if="rouletteWinner.groups && rouletteWinner.groups.length">
@@ -258,12 +303,12 @@
                         </div>
                     </div>
 
-                    <div class="roulette-empty" v-else-if="!rouletteWinner && !rouletteSpinning && rouletteAvailableUsers.length === 0">
-                        <div class="empty-icon">📭</div>
-                        <div>Нет пользователей для выбора</div>
+                    <div class="roulette-empty" v-else-if="!rouletteWinner && !rouletteSpinning && rouletteFinalUsersList.length === 0">
+                        <div class="empty-icon">🎲</div>
+                        <div>Выберите пользователей или группы для участия в рулетке</div>
                     </div>
 
-                    <div class="roulette-empty" v-else-if="!rouletteWinner && !rouletteSpinning && rouletteAvailableUsers.length > 0">
+                    <div class="roulette-empty" v-else-if="!rouletteWinner && !rouletteSpinning && rouletteFinalUsersList.length > 0">
                         <div class="empty-icon">🎲</div>
                         <div>Нажмите "Крутить!" чтобы начать</div>
                     </div>

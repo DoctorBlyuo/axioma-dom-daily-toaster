@@ -1896,3 +1896,420 @@ body {
     }
 }
 
+/* Рулетка - новый дизайн */
+.roulette-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(10px);
+}
+
+.roulette-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.roulette-header h1 {
+    font-size: 32px;
+    margin-bottom: 5px;
+}
+
+.roulette-header p {
+    opacity: 0.9;
+    font-size: 14px;
+}
+
+.roulette-layout {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+}
+
+/* Левая панель - пользователи */
+.roulette-users-panel {
+    flex: 1;
+    background: #f8f9fa;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Правая панель - группы и управление */
+.roulette-controls-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.groups-section {
+    background: #f8f9fa;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex: 2;
+}
+
+.roulette-action-section {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 15px;
+    flex: 0;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: white;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.panel-header h3 {
+    font-size: 16px;
+    color: #333;
+    margin: 0;
+}
+
+.select-all-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    color: #667eea;
+}
+
+.select-all-checkbox input {
+    margin: 0;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.panel-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    min-height: 0;
+}
+
+.users-list-scroll {
+    max-height: 400px;
+}
+
+.groups-list-scroll {
+    max-height: 300px;
+}
+
+.user-checkbox, .group-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    margin-bottom: 5px;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid #e9ecef;
+}
+
+.user-checkbox:hover, .group-checkbox:hover {
+    background: #e0e7ff;
+    border-color: #764ba2;
+    transform: translateX(3px);
+}
+
+.user-checkbox input, .group-checkbox input {
+    margin: 0;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.user-name {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.user-status-badge {
+    font-size: 14px;
+}
+
+.group-name {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.group-count {
+    font-size: 12px;
+    color: #999;
+}
+
+.empty-message {
+    text-align: center;
+    padding: 20px;
+    color: #999;
+    font-size: 13px;
+}
+
+.stats-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.stats-count {
+    font-size: 14px;
+    color: #555;
+}
+
+.stats-count strong {
+    color: #667eea;
+    font-size: 18px;
+}
+
+.clear-all-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+.clear-all-btn:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+}
+
+.roulette-spin-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+}
+
+.roulette-spin-btn:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.roulette-spin-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.roulette-result-area {
+    padding: 20px;
+    border-top: 1px solid #e9ecef;
+    background: #f8f9fa;
+    min-height: 350px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Анимация рулетки */
+.roulette-wheel-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: white;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.roulette-wheel {
+    position: relative;
+    width: 120px;
+    height: 120px;
+}
+
+.wheel-spinner {
+    width: 100%;
+    height: 100%;
+    border: 6px solid #e0e0e0;
+    border-top: 6px solid #667eea;
+    border-right: 6px solid #764ba2;
+    border-bottom: 6px solid #667eea;
+    border-left: 6px solid #764ba2;
+    border-radius: 50%;
+    animation: spinWheel 0.6s linear infinite;
+}
+
+@keyframes spinWheel {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.wheel-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 32px;
+    background: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.roulette-names-roller {
+    width: 100%;
+    max-width: 350px;
+    height: 50px;
+    overflow: hidden;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.names-roller {
+    transition: transform 0.03s linear;
+}
+
+.rolling-name {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    border-bottom: 1px solid #e9ecef;
+    background: white;
+}
+
+.roulette-result {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.roulette-winner-animation {
+    text-align: center;
+    padding: 25px;
+    background: white;
+    border-radius: 20px;
+    animation: winnerPop 0.6s ease-out;
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+@keyframes winnerPop {
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.winner-icon {
+    font-size: 50px;
+    margin-bottom: 10px;
+}
+
+.winner-name {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+    word-break: break-word;
+}
+
+.winner-status {
+    font-size: 14px;
+    padding: 4px 16px;
+    border-radius: 30px;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+
+.winner-status.status-active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.winner-groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 8px;
+}
+
+.roulette-empty {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+}
+
+.empty-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+    .roulette-layout {
+        flex-direction: column;
+    }
+
+    .roulette-users-panel,
+    .roulette-controls-panel {
+        min-height: 300px;
+    }
+
+    .winner-name {
+        font-size: 18px;
+    }
+
+    .roulette-spin-btn {
+        padding: 12px 20px;
+        font-size: 16px;
+    }
+}

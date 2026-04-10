@@ -33,8 +33,9 @@ createApp({
     const selectedFile = ref(null);
     const uploadPreview = ref(null);
 
-    // Рулетка
-    const rouletteSelectedGroup = ref(null);
+    // Рулетка - конструктор списка
+    const rouletteSelectedGroups = ref([]);
+    const rouletteSelectedUsers = ref([]);
     const rouletteWinner = ref(null);
     const rouletteSpinning = ref(false);
     const rollingUsers = ref([]);
@@ -68,17 +69,31 @@ createApp({
       return "toast-burnt";
     });
 
-    // Доступные пользователи для рулетки (только активные)
-    const rouletteAvailableUsers = computed(() => {
-        let users = activeUsers.value;
+    // Финальный список пользователей для рулетки (объединение выбранных групп и конкретных пользователей)
+    const rouletteFinalUsersList = computed(() => {
+        const userSet = new Map();
 
-        if (rouletteSelectedGroup.value) {
-            users = users.filter(user =>
-                user.groups && user.groups.includes(rouletteSelectedGroup.value)
-            );
+        if (rouletteSelectedGroups.value && rouletteSelectedGroups.value.length > 0) {
+            rouletteSelectedGroups.value.forEach(groupId => {
+                const groupUsers = activeUsers.value.filter(u => u.groups && u.groups.includes(groupId));
+                groupUsers.forEach(u => {
+                    if (!userSet.has(u.id)) {
+                        userSet.set(u.id, u);
+                    }
+                });
+            });
         }
 
-        return users;
+        if (rouletteSelectedUsers.value && rouletteSelectedUsers.value.length > 0) {
+            rouletteSelectedUsers.value.forEach(userId => {
+                const user = activeUsers.value.find(u => u.id === userId);
+                if (user && !userSet.has(user.id)) {
+                    userSet.set(user.id, user);
+                }
+            });
+        }
+
+        return Array.from(userSet.values());
     });
 
     // Загрузка Jira конфига
@@ -303,7 +318,6 @@ createApp({
         }
 
         try {
-            // Проверяем, существует ли группа с таким именем (при создании)
             if (!groupForm.value.id) {
                 const existingGroup = groups.value.find(g => g.name.toLowerCase() === groupForm.value.name.toLowerCase());
                 if (existingGroup) {
@@ -353,11 +367,9 @@ createApp({
         if (!deleteGroup.value) return;
 
         try {
-            // Загружаем актуальных пользователей
             const usersRes = await fetch("/api/users");
             const currentUsers = await usersRes.json();
 
-            // Удаляем группу у всех пользователей
             const updatedUsers = currentUsers.map(user => {
                 if (user.groups && user.groups.includes(deleteGroup.value.id)) {
                     return {
@@ -368,7 +380,6 @@ createApp({
                 return user;
             });
 
-            // Сохраняем обновленных пользователей
             const saveUsersRes = await fetch("/api/users", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
@@ -379,7 +390,6 @@ createApp({
                 throw new Error('Ошибка при обновлении пользователей');
             }
 
-            // Удаляем саму группу
             const deleteGroupRes = await fetch(`/api/groups/${deleteGroup.value.id}`, {
                 method: 'DELETE'
             });
@@ -398,15 +408,20 @@ createApp({
         }
     };
 
+    // Очистка выбора в рулетке
+    const clearRouletteSelection = () => {
+        rouletteSelectedGroups.value = [];
+        rouletteSelectedUsers.value = [];
+    };
+
     // Функция вращения рулетки с анимацией
     const spinRoulette = () => {
-        if (rouletteAvailableUsers.value.length === 0) return;
+        if (rouletteFinalUsersList.value.length === 0) return;
 
         rouletteSpinning.value = true;
         rouletteWinner.value = null;
 
-        // Создаем массив для прокрутки (повторяем пользователей несколько раз)
-        const usersList = [...rouletteAvailableUsers.value];
+        const usersList = [...rouletteFinalUsersList.value];
         const repeatCount = 5;
         rollingUsers.value = [];
         for (let i = 0; i < repeatCount; i++) {
@@ -418,7 +433,6 @@ createApp({
         const totalHeight = rollingUsers.value.length * itemHeight;
         const targetPosition = (rollingUsers.value.length - usersList.length) * itemHeight;
 
-        // Запускаем анимацию прокрутки
         if (rollingInterval) clearInterval(rollingInterval);
 
         rollingInterval = setInterval(() => {
@@ -429,18 +443,15 @@ createApp({
             rollerOffset.value = currentPosition;
         }, 30);
 
-        // Останавливаем анимацию через 2.5 секунды и выбираем победителя
         setTimeout(() => {
             if (rollingInterval) {
                 clearInterval(rollingInterval);
                 rollingInterval = null;
             }
 
-            // Выбираем случайного пользователя
-            const randomIndex = Math.floor(Math.random() * rouletteAvailableUsers.value.length);
-            rouletteWinner.value = rouletteAvailableUsers.value[randomIndex];
+            const randomIndex = Math.floor(Math.random() * rouletteFinalUsersList.value.length);
+            rouletteWinner.value = rouletteFinalUsersList.value[randomIndex];
 
-            // Устанавливаем финальную позицию на выбранного пользователя
             const winnerPosition = randomIndex * itemHeight;
             rollerOffset.value = winnerPosition;
 
@@ -450,7 +461,7 @@ createApp({
         }, 2500);
     };
 
-    // Сброс рулетки при смене группы
+    // Сброс рулетки
     const resetRoulette = () => {
         rouletteWinner.value = null;
         rouletteSpinning.value = false;
@@ -868,6 +879,51 @@ createApp({
       });
     };
 
+        // Выбрать всех пользователей
+    const selectAllUsers = computed({
+        get: () => {
+            return rouletteSelectedUsers.value.length === activeUsers.value.length && activeUsers.value.length > 0;
+        },
+        set: (val) => {
+            if (val) {
+                rouletteSelectedUsers.value = activeUsers.value.map(u => u.id);
+            } else {
+                rouletteSelectedUsers.value = [];
+            }
+        }
+    });
+
+    // Выбрать все группы
+    const selectAllGroups = computed({
+        get: () => {
+            return rouletteSelectedGroups.value.length === groups.value.length && groups.value.length > 0;
+        },
+        set: (val) => {
+            if (val) {
+                rouletteSelectedGroups.value = groups.value.map(g => g.id);
+            } else {
+                rouletteSelectedGroups.value = [];
+            }
+        }
+    });
+
+    // Функции для toggle
+    const toggleAllUsers = () => {
+        if (selectAllUsers.value) {
+            rouletteSelectedUsers.value = activeUsers.value.map(u => u.id);
+        } else {
+            rouletteSelectedUsers.value = [];
+        }
+    };
+
+    const toggleAllGroups = () => {
+        if (selectAllGroups.value) {
+            rouletteSelectedGroups.value = groups.value.map(g => g.id);
+        } else {
+            rouletteSelectedGroups.value = [];
+        }
+    };
+
     const onDragOver = (event) => {
       event.preventDefault();
       event.dataTransfer.dropEffect = "move";
@@ -992,14 +1048,20 @@ createApp({
       removeUserFromGroup,
       filterUsersForGroup,
       // Рулетка
-      rouletteSelectedGroup,
+      rouletteSelectedGroups,
+      rouletteSelectedUsers,
       rouletteWinner,
       rouletteSpinning,
-      rouletteAvailableUsers,
+      rouletteFinalUsersList,
       rollingUsers,
       rollerOffset,
       spinRoulette,
-      resetRoulette
+      resetRoulette,
+         selectAllUsers,
+        selectAllGroups,
+    toggleAllUsers,
+    toggleAllGroups,
+      clearRouletteSelection
     };
   },
 }).mount("#app");

@@ -21,12 +21,7 @@ jira:
   origin: https://oneproject.it-one.ru
   url: https://oneproject.it-one.ru/jira/secure/RapidBoard.jspa?rapidView=327
 users:
-- groups:
-  - 1
-  - 2
-  - 3
-  - 5
-  - 4
+- groups: []
   name: Margarita
   patronymic: ''
   status: Активен
@@ -35,22 +30,19 @@ users:
   patronymic: null
   status: Активен
   surname: Vasiliev
-- groups:
-  - 1
+- groups: []
   name: Valeriy
   patronymic: null
   status: Активен
   surname: Sukhorukov
 - groups:
-  - 3
-  - 6
   - 5
+  - 4
   name: Elizaveta
   patronymic: ''
   status: Активен
   surname: Starovoitova
-- groups:
-  - 1
+- groups: []
   name: Andrey
   patronymic: null
   status: Активен
@@ -63,12 +55,16 @@ users:
   patronymic: null
   status: Активен
   surname: Ostanina
-- name: Polina
-  patronymic: null
+- groups:
+  - 1
+  name: Polina
+  patronymic: ''
   status: Активен
   surname: Ognegina
-- name: Igor
-  patronymic: null
+- groups:
+  - 1
+  name: Igor
+  patronymic: ''
   status: Активен
   surname: Nedomolkin
 - name: Dariya
@@ -84,14 +80,12 @@ users:
   patronymic: null
   status: Активен
   surname: Khalibulov
-- groups:
-  - 3
+- groups: []
   name: Aleksei
   patronymic: null
   status: Активен
   surname: Korolkov
-- groups:
-  - 3
+- groups: []
   name: Alina
   patronymic: null
   status: Активен

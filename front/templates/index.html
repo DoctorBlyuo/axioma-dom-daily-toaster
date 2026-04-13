@@ -251,9 +251,7 @@
                         <h3>🎯 Участники розыгрыша</h3>
                         <div class="center-header-actions">
                             <span class="selected-count">{{ rouletteFinalUsersList.length }} чел.</span>
-                            <button class="clear-selection-btn" @click="clearRouletteSelection" title="Очистить всё">
-                                🗑️
-                            </button>
+                            <button class="clear-selection-btn" @click="clearRouletteSelection" title="Очистить всё">🗑️</button>
                         </div>
                     </div>
                     <div class="selected-users-list">
@@ -506,6 +504,7 @@
     <!-- Модалка добавления/редактирования пользователя -->
     <!-- Модалка добавления/редактирования пользователя -->
     <!-- Модалка добавления/редактирования пользователя -->
+    <!-- Модалка добавления/редактирования пользователя -->
     <div id="userModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">{{ modalTitle }}</div>
@@ -532,19 +531,11 @@
                 </div>
                 <div class="form-group">
                     <label>Группы</label>
-                    <div class="dropdown-checkboxes" :class="{ 'open': groupsDropdownOpen }">
-                        <div class="dropdown-header" @click="toggleGroupsDropdown">
-                        <span class="dropdown-selected">
-                            {{ getSelectedGroupsNames() || 'Выберите группы' }}
-                        </span>
-                            <span class="dropdown-arrow">{{ groupsDropdownOpen ? '▲' : '▼' }}</span>
-                        </div>
-                        <div class="dropdown-list" v-if="groupsDropdownOpen">
-                            <label v-for="group in groups" :key="group.id" class="dropdown-item">
-                                <input type="checkbox" :value="group.id" v-model="form.groups">
-                                <span :style="{ color: group.color }">{{ group.name }}</span>
-                            </label>
-                        </div>
+                    <div class="groups-grid">
+                        <label v-for="group in groups" :key="group.id" class="group-checkbox-simple">
+                            <input type="checkbox" :value="group.id" v-model="form.groups">
+                            <span class="group-name-simple" :style="{ color: group.color }">{{ group.name }}</span>
+                        </label>
                     </div>
                 </div>
             </div>
@@ -554,141 +545,147 @@
             </div>
         </div>
     </div>
+    <div class="modal-footer">
+        <button class="modal-btn modal-btn-secondary" @click="closeModal">Отмена</button>
+        <button class="modal-btn modal-btn-primary" @click="saveUser">Сохранить</button>
+    </div>
+</div>
+</div>
 
-    <!-- Модалка удаления пользователя -->
-    <div id="deleteModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">Удалить пользователя</div>
-            <div class="modal-body">
-                <p>Вы уверены, что хотите удалить пользователя
-                    <strong>{{ deleteUser?.surname }} {{ deleteUser?.name }} {{ deleteUser?.patronymic }}</strong>?
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button class="modal-btn modal-btn-secondary" @click="closeDeleteModal">Отмена</button>
-                <button class="modal-btn modal-btn-danger" @click="confirmDelete">Удалить</button>
-            </div>
+<!-- Модалка удаления пользователя -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">Удалить пользователя</div>
+        <div class="modal-body">
+            <p>Вы уверены, что хотите удалить пользователя
+                <strong>{{ deleteUser?.surname }} {{ deleteUser?.name }} {{ deleteUser?.patronymic }}</strong>?
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-secondary" @click="closeDeleteModal">Отмена</button>
+            <button class="modal-btn modal-btn-danger" @click="confirmDelete">Удалить</button>
         </div>
     </div>
+</div>
 
-    <!-- Модалка загрузки конфига -->
-    <div id="uploadModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">📂 Загрузить конфиг</div>
-            <div class="modal-body">
-                <p>Выберите файл config.yaml для загрузки</p>
-                <div class="form-group">
-                    <label>Файл конфигурации</label>
-                    <input type="file" id="configFile" accept=".yaml,.yml" @change="handleFileSelect"/>
-                </div>
-                <div v-if="uploadPreview" class="upload-preview">
-                    <h4>Предпросмотр:</h4>
-                    <pre>{{ uploadPreview }}</pre>
-                </div>
+<!-- Модалка загрузки конфига -->
+<div id="uploadModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">📂 Загрузить конфиг</div>
+        <div class="modal-body">
+            <p>Выберите файл config.yaml для загрузки</p>
+            <div class="form-group">
+                <label>Файл конфигурации</label>
+                <input type="file" id="configFile" accept=".yaml,.yml" @change="handleFileSelect"/>
             </div>
-            <div class="modal-footer">
-                <button class="modal-btn modal-btn-secondary" @click="closeUploadModal">Отмена</button>
-                <button class="modal-btn modal-btn-primary" @click="uploadConfig" :disabled="!selectedFile">Загрузить и применить</button>
+            <div v-if="uploadPreview" class="upload-preview">
+                <h4>Предпросмотр:</h4>
+                <pre>{{ uploadPreview }}</pre>
             </div>
         </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-secondary" @click="closeUploadModal">Отмена</button>
+            <button class="modal-btn modal-btn-primary" @click="uploadConfig" :disabled="!selectedFile">Загрузить и применить</button>
+        </div>
     </div>
+</div>
 
-    <!-- Модалка настроек Jira -->
-    <!-- Модалка настроек Jira -->
-    <div id="jiraModal" class="modal">
-        <div class="modal-content modal-medium">
-            <div class="modal-header">🔧 Настройки Jira</div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>URL Jira доски:</label>
-                    <input type="text" v-model="jiraConfig.url" placeholder="https://...">
-                </div>
-                <div class="form-group">
-                    <label>Origin (домен Jira):</label>
-                    <input type="text" v-model="jiraConfig.origin" placeholder="https://...">
-                </div>
-                <div class="jira-test-section">
-                    <button class="test-jira-btn" @click="testJiraConnection">🔗 Проверить подключение</button>
-                    <div class="test-result" v-if="testResult">
+<!-- Модалка настроек Jira -->
+<!-- Модалка настроек Jira -->
+<div id="jiraModal" class="modal">
+    <div class="modal-content modal-medium">
+        <div class="modal-header">🔧 Настройки Jira</div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>URL Jira доски:</label>
+                <input type="text" v-model="jiraConfig.url" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>Origin (домен Jira):</label>
+                <input type="text" v-model="jiraConfig.origin" placeholder="https://...">
+            </div>
+            <div class="jira-test-section">
+                <button class="test-jira-btn" @click="testJiraConnection">🔗 Проверить подключение</button>
+                <div class="test-result" v-if="testResult">
                     <span :class="testResult.success ? 'success' : 'error'">
                         {{ testResult.message }}
                     </span>
-                    </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button class="modal-btn modal-btn-secondary" @click="closeJiraModal">Отмена</button>
-                <button class="modal-btn modal-btn-primary" @click="saveJiraConfig">Сохранить</button>
             </div>
         </div>
-    </div>
-
-    <!-- Модалка добавления/редактирования группы -->
-    <div id="groupModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">{{ groupModalTitle }}</div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Название группы</label>
-                    <input type="text" v-model="groupForm.name" placeholder="Введите название группы">
-                </div>
-                <div class="form-group">
-                    <label>Цвет группы</label>
-                    <input type="color" v-model="groupForm.color" style="width: 100%; height: 40px;">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="modal-btn modal-btn-secondary" @click="closeGroupModal">Отмена</button>
-                <button class="modal-btn modal-btn-primary" @click="saveGroup">Сохранить</button>
-            </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-secondary" @click="closeJiraModal">Отмена</button>
+            <button class="modal-btn modal-btn-primary" @click="saveJiraConfig">Сохранить</button>
         </div>
     </div>
+</div>
 
-    <!-- Модалка удаления группы -->
-    <div id="deleteGroupModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">Удалить группу</div>
-            <div class="modal-body">
-                <p>Вы уверены, что хотите удалить группу <strong>{{ deleteGroup?.name }}</strong>?</p>
-                <p style="color: #dc3545; margin-top: 10px;">Внимание! Пользователи, состоящие в этой группе, потеряют членство в ней.</p>
+<!-- Модалка добавления/редактирования группы -->
+<div id="groupModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">{{ groupModalTitle }}</div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Название группы</label>
+                <input type="text" v-model="groupForm.name" placeholder="Введите название группы">
             </div>
-            <div class="modal-footer">
-                <button class="modal-btn modal-btn-secondary" @click="closeDeleteGroupModal">Отмена</button>
-                <button class="modal-btn modal-btn-danger" @click="confirmDeleteGroup">Удалить</button>
+            <div class="form-group">
+                <label>Цвет группы</label>
+                <input type="color" v-model="groupForm.color" style="width: 100%; height: 40px;">
             </div>
         </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-secondary" @click="closeGroupModal">Отмена</button>
+            <button class="modal-btn modal-btn-primary" @click="saveGroup">Сохранить</button>
+        </div>
     </div>
+</div>
 
-    <!-- Модалка добавления участника в группу -->
-    <div id="addMemberModal" class="modal">
-        <div class="modal-content modal-medium">
-            <div class="modal-header">👥 Добавить участника в группу <strong>{{ selectedGroup?.name }}</strong></div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Поиск пользователя:</label>
-                    <input type="text" v-model="memberSearchQuery" @input="filterUsersForGroup" placeholder="Введите имя или фамилию...">
-                </div>
-                <div class="available-users-list">
-                    <div v-for="user in filteredAvailableUsers" :key="user.id" class="available-user-item" @click="addUserToGroup(user)">
-                        <div class="user-info">
-                            <div class="user-name">{{ user.surname }} {{ user.name }} {{ user.patronymic }}</div>
-                            <div class="user-status" :class="{ 'status-active': user.status === 'Активен', 'status-inactive': user.status !== 'Активен' }">
-                                {{ user.status }}
-                            </div>
+<!-- Модалка удаления группы -->
+<div id="deleteGroupModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">Удалить группу</div>
+        <div class="modal-body">
+            <p>Вы уверены, что хотите удалить группу <strong>{{ deleteGroup?.name }}</strong>?</p>
+            <p style="color: #dc3545; margin-top: 10px;">Внимание! Пользователи, состоящие в этой группе, потеряют членство в ней.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-secondary" @click="closeDeleteGroupModal">Отмена</button>
+            <button class="modal-btn modal-btn-danger" @click="confirmDeleteGroup">Удалить</button>
+        </div>
+    </div>
+</div>
+
+<!-- Модалка добавления участника в группу -->
+<div id="addMemberModal" class="modal">
+    <div class="modal-content modal-medium">
+        <div class="modal-header">👥 Добавить участника в группу <strong>{{ selectedGroup?.name }}</strong></div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Поиск пользователя:</label>
+                <input type="text" v-model="memberSearchQuery" @input="filterUsersForGroup" placeholder="Введите имя или фамилию...">
+            </div>
+            <div class="available-users-list">
+                <div v-for="user in filteredAvailableUsers" :key="user.id" class="available-user-item" @click="addUserToGroup(user)">
+                    <div class="user-info">
+                        <div class="user-name">{{ user.surname }} {{ user.name }} {{ user.patronymic }}</div>
+                        <div class="user-status" :class="{ 'status-active': user.status === 'Активен', 'status-inactive': user.status !== 'Активен' }">
+                            {{ user.status }}
                         </div>
-                        <button class="add-to-group-btn">➕ Добавить</button>
                     </div>
-                    <div v-if="filteredAvailableUsers.length === 0" class="empty-state">
-                        <div class="empty-icon">📭</div>
-                        <div>Нет доступных пользователей</div>
-                    </div>
+                    <button class="add-to-group-btn">➕ Добавить</button>
+                </div>
+                <div v-if="filteredAvailableUsers.length === 0" class="empty-state">
+                    <div class="empty-icon">📭</div>
+                    <div>Нет доступных пользователей</div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="modal-btn modal-btn-secondary" @click="closeAddMemberModal">Закрыть</button>
-            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-secondary" @click="closeAddMemberModal">Закрыть</button>
         </div>
     </div>
+</div>
 </div>
 
 <script src="/static/vue-3.5.32/vue.global.js"></script>

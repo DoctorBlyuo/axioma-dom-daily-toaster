@@ -21,16 +21,16 @@ jira:
   origin: https://oneproject.it-one.ru
   url: https://oneproject.it-one.ru/jira/secure/RapidBoard.jspa?rapidView=327
 users:
-- groups: []
+- groups:
+  - 2
+  - 6
   name: Margarita
   patronymic: ''
   status: Активен
   surname: Zhivotovskaya
-- name: Alexey
-  patronymic: null
-  status: Активен
-  surname: Vasiliev
-- groups: []
+- groups:
+  - 2
+  - 6
   name: Valeriy
   patronymic: null
   status: Активен
@@ -38,36 +38,43 @@ users:
 - groups:
   - 5
   - 4
+  - 6
   name: Elizaveta
   patronymic: ''
   status: Активен
   surname: Starovoitova
-- groups: []
+- groups:
+  - 2
   name: Andrey
   patronymic: null
   status: Активен
   surname: Shapovalov
-- name: Alexander
+- groups:
+  - 2
+  name: Alexander
   patronymic: null
   status: Активен
   surname: Petrenko
-- name: Kseniya
+- groups:
+  - 3
+  name: Kseniya
   patronymic: null
   status: Активен
   surname: Ostanina
 - groups:
-  - 1
+  - 3
   name: Polina
   patronymic: ''
   status: Активен
   surname: Ognegina
 - groups:
-  - 1
+  - 3
   name: Igor
   patronymic: ''
   status: Активен
   surname: Nedomolkin
-- name: Dariya
+- groups: []
+  name: Dariya
   patronymic: null
   status: Активен
   surname: Markina
@@ -119,7 +126,8 @@ users:
   patronymic: null
   status: Активен
   surname: Korotkiy
-- name: Anton
+- groups: []
+  name: Anton
   patronymic: null
   status: Активен
   surname: Schastnyi
@@ -128,7 +136,40 @@ users:
   patronymic: null
   status: Активен
   surname: Nomokonov
-- name: Anna
+- groups: []
+  name: Anna
   patronymic: null
   status: Активен
   surname: Kogan
+- groups: []
+  name: Margarita
+  patronymic: ''
+  status: Активен
+  surname: Zhivotovskaya
+- groups: []
+  name: Alexey
+  patronymic: null
+  status: Активен
+  surname: Vasiliev
+- name: Alexander
+  patronymic: null
+  status: Активен
+  surname: Petrenko
+- groups: []
+  name: Valeriy
+  patronymic: null
+  status: Активен
+  surname: Sukhorukov
+- name: Kseniya
+  patronymic: null
+  status: Активен
+  surname: Ostanina
+- name: Dariya
+  patronymic: null
+  status: Активен
+  surname: Markina
+- groups: []
+  name: Alexey
+  patronymic: null
+  status: В отпуске
+  surname: Vasiliev

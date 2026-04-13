@@ -2155,3 +2155,309 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* Группы - новый дизайн V2 */
+.groups-layout-v2 {
+    display: flex;
+    gap: 20px;
+    height: 100%;
+    min-height: 0;
+}
+
+/* Левая панель - все пользователи (30%) - СО СКРОЛЛОМ */
+.groups-all-users {
+    width: 30%;
+    background: white;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    height: 100%;
+}
+
+/* ЭТОТ БЛОК ОТВЕЧАЕТ ЗА СКРОЛЛ - ВЫСОТА 100% И overflow-y: auto */
+.all-users-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 12px;
+    min-height: 0;
+}
+
+.user-drag-item {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 8px;
+    cursor: grab;
+    transition: all 0.2s;
+    border: 1px solid #e9ecef;
+}
+
+.user-drag-item:active {
+    cursor: grabbing;
+}
+
+.user-drag-item:hover {
+    background: #e8eef5;
+    transform: translateX(3px);
+    border-color: #667eea;
+}
+
+.user-drag-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.user-drag-name {
+    font-weight: 500;
+    font-size: 13px;
+    color: #333;
+}
+
+.user-drag-groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.empty-users {
+    text-align: center;
+    padding: 30px;
+    color: #999;
+    font-size: 12px;
+}
+
+/* Центральная панель - БЕЗ СКРОЛЛА */
+.groups-selected-group {
+    width: 40%;
+    background: white;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.group-members-scroll {
+    padding: 12px;
+    overflow-y: visible;
+    overflow-x: visible;
+}
+
+/* Правая панель - БЕЗ СКРОЛЛА */
+.groups-right-list {
+    width: 30%;
+    background: white;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.groups-right-scroll {
+    padding: 12px;
+    overflow-y: visible;
+    overflow-x: visible;
+}
+
+.add-group-v2 {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.add-group-v2:hover {
+    background: #218838;
+    transform: translateY(-1px);
+}
+
+.group-right-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    margin-bottom: 8px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid #e9ecef;
+}
+
+.group-right-item:hover {
+    background: #e8eef5;
+    transform: translateX(3px);
+}
+
+.group-right-item.active {
+    background: linear-gradient(135deg, #e8eef5, #e0e7ff);
+    border-color: #667eea;
+}
+
+.group-right-info {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex: 1;
+}
+
+.group-right-name {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.group-right-count {
+    font-size: 11px;
+    color: #999;
+}
+
+.group-right-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.group-edit-right, .group-delete-right {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.group-edit-right:hover {
+    background: #007bff;
+    color: white;
+}
+
+.group-delete-right:hover {
+    background: #dc3545;
+    color: white;
+}
+
+.group-actions-header {
+    display: flex;
+    gap: 8px;
+}
+
+.edit-group-small, .delete-group-small {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.edit-group-small:hover {
+    background: #007bff;
+    color: white;
+}
+
+.delete-group-small:hover {
+    background: #dc3545;
+    color: white;
+}
+
+.empty-groups-right {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+}
+
+.group-member-v2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    transition: all 0.2s;
+}
+
+.group-member-v2:hover {
+    background: #e8eef5;
+}
+
+.member-name-v2 {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+}
+
+.remove-member-v2 {
+    background: #dc3545;
+    color: white;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.remove-member-v2:hover {
+    background: #c82333;
+    transform: scale(1.05);
+}
+
+.empty-members-v2 {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+}
+
+.hint-text {
+    font-size: 11px;
+    margin-top: 8px;
+    color: #bbb;
+}
+
+.select-group-hint {
+    text-align: center;
+    padding: 50px 20px;
+    color: #999;
+}
+
+.hint-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+    opacity: 0.5;
+}
+.all-users-scroll {
+    flex: 1;
+    overflow-y: auto !important;
+    overflow-x: hidden;
+    padding: 12px;
+    min-height: 0;
+    max-height: calc(100vh - 200px);
+}
+
+@media (max-width: 900px) {
+    .groups-layout-v2 {
+        flex-direction: column;
+    }
+
+    .groups-all-users, .groups-selected-group, .groups-right-list {
+        width: 100%;
+        max-height: 300px;
+    }
+}

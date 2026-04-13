@@ -33,9 +33,6 @@ createApp({
     const selectedFile = ref(null);
     const uploadPreview = ref(null);
 
-    // Для выпадающего списка групп в модалке пользователя
-    const groupsDropdownOpen = ref(false);
-
     // Рулетка - конструктор списка
     const rouletteSelectedGroups = ref([]);
     const rouletteSelectedUsers = ref([]);
@@ -49,8 +46,15 @@ createApp({
     const originalQueueOrder = ref([]);
     const lateUsers = ref(new Set());
 
+    // Группы - новый дизайн
+    const allUsersList = computed(() => {
+        return [...activeUsers.value, ...inactiveUsers.value];
+    });
+    const selectedGroupForMembers = ref(null);
+
     let draggedUser = null;
     let draggedFrom = null;
+    let draggedUserForGroup = null;
 
     // Таймер
     const timerSeconds = ref(0);
@@ -130,29 +134,6 @@ createApp({
             }
         }
     });
-
-    // Функция для отображения выбранных групп
-    const getSelectedGroupsNames = () => {
-        if (!form.value.groups || form.value.groups.length === 0) return '';
-        const selectedNames = form.value.groups.map(groupId => {
-            const group = groups.value.find(g => g.id === groupId);
-            return group ? group.name : '';
-        }).filter(name => name);
-        return selectedNames.join(', ');
-    };
-
-    // Переключение выпадающего списка групп
-    const toggleGroupsDropdown = () => {
-        groupsDropdownOpen.value = !groupsDropdownOpen.value;
-    };
-
-    // Закрытие выпадающего списка при клике вне
-    const closeDropdownOnClickOutside = (event) => {
-        const dropdown = document.querySelector('.dropdown-checkboxes');
-        if (dropdown && !dropdown.contains(event.target) && groupsDropdownOpen.value) {
-            groupsDropdownOpen.value = false;
-        }
-    };
 
     // Загрузка Jira конфига
     const loadJiraConfig = async () => {
@@ -547,6 +528,77 @@ createApp({
         rollerOffset.value = 0;
     };
 
+    // Группы - выбор группы и добавление пользователя
+    const selectGroup = (group) => {
+        selectedGroupForMembers.value = group;
+    };
+
+    const selectUserForGroup = async (user) => {
+        if (!selectedGroupForMembers.value) {
+            alert('Сначала выберите группу (нажмите на группу справа)');
+            return;
+        }
+
+        if (!user.groups) user.groups = [];
+        if (!user.groups.includes(selectedGroupForMembers.value.id)) {
+            user.groups.push(selectedGroupForMembers.value.id);
+
+            const activeIndex = activeUsers.value.findIndex(u => u.id === user.id);
+            if (activeIndex !== -1) {
+                activeUsers.value[activeIndex] = { ...user };
+            } else {
+                const inactiveIndex = inactiveUsers.value.findIndex(u => u.id === user.id);
+                if (inactiveIndex !== -1) {
+                    inactiveUsers.value[inactiveIndex] = { ...user };
+                }
+            }
+
+            await saveToBackend();
+        }
+    };
+
+    const dragUserStart = (event, user) => {
+        draggedUserForGroup = user;
+        event.dataTransfer.effectAllowed = 'move';
+        event.target.style.opacity = '0.5';
+    };
+
+    const dragUserEnd = (event) => {
+        event.target.style.opacity = '1';
+        draggedUserForGroup = null;
+    };
+
+    const dropUserToGroup = async (event) => {
+        event.preventDefault();
+        if (!draggedUserForGroup) {
+            return;
+        }
+        if (!selectedGroupForMembers.value) {
+            alert('Сначала выберите группу (нажмите на группу справа)');
+            return;
+        }
+
+        const user = draggedUserForGroup;
+
+        if (!user.groups) user.groups = [];
+        if (!user.groups.includes(selectedGroupForMembers.value.id)) {
+            user.groups.push(selectedGroupForMembers.value.id);
+
+            const activeIndex = activeUsers.value.findIndex(u => u.id === user.id);
+            if (activeIndex !== -1) {
+                activeUsers.value[activeIndex] = { ...user };
+            } else {
+                const inactiveIndex = inactiveUsers.value.findIndex(u => u.id === user.id);
+                if (inactiveIndex !== -1) {
+                    inactiveUsers.value[inactiveIndex] = { ...user };
+                }
+            }
+
+            await saveToBackend();
+        }
+        draggedUserForGroup = null;
+    };
+
     const updateTimer = () => {
       if (!timerRunning.value) return;
       if (timerStartTime) {
@@ -891,7 +943,6 @@ createApp({
       modalTitle.value = "Добавить пользователя";
       form.value = { surname: "", name: "", patronymic: "", status: "Активен", groups: [] };
       editingUserId = null;
-      groupsDropdownOpen.value = false;
       document.getElementById("userModal").classList.add("show");
     };
 
@@ -905,7 +956,6 @@ createApp({
         groups: user.groups ? [...user.groups] : []
       };
       editingUserId = user.id;
-      groupsDropdownOpen.value = false;
       document.getElementById("userModal").classList.add("show");
     };
 
@@ -1037,7 +1087,6 @@ createApp({
       loadUsers();
       loadJiraConfig();
       loadGroups();
-      document.addEventListener('click', closeDropdownOnClickOutside);
     });
 
     onUnmounted(() => {
@@ -1048,7 +1097,6 @@ createApp({
         clearInterval(rollingInterval);
       }
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      document.removeEventListener('click', closeDropdownOnClickOutside);
     });
 
     return {
@@ -1144,10 +1192,14 @@ createApp({
       originalQueueOrder,
       lateUsers,
       resetToOriginalOrder,
-      // Выпадающий список групп
-      groupsDropdownOpen,
-      toggleGroupsDropdown,
-      getSelectedGroupsNames
+      // Группы - новый дизайн
+      allUsersList,
+      selectedGroupForMembers,
+      selectGroup,
+      selectUserForGroup,
+      dragUserStart,
+      dragUserEnd,
+      dropUserToGroup
     };
   },
 }).mount("#app");

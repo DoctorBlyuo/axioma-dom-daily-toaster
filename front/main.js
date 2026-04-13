@@ -33,6 +33,9 @@ createApp({
     const selectedFile = ref(null);
     const uploadPreview = ref(null);
 
+    // Для выпадающего списка групп в модалке пользователя
+    const groupsDropdownOpen = ref(false);
+
     // Рулетка - конструктор списка
     const rouletteSelectedGroups = ref([]);
     const rouletteSelectedUsers = ref([]);
@@ -41,6 +44,10 @@ createApp({
     const rollingUsers = ref([]);
     const rollerOffset = ref(0);
     let rollingInterval = null;
+
+    // Для хранения изначального порядка пользователей с фиксированными номерами
+    const originalQueueOrder = ref([]);
+    const lateUsers = ref(new Set());
 
     let draggedUser = null;
     let draggedFrom = null;
@@ -95,6 +102,57 @@ createApp({
 
         return Array.from(userSet.values());
     });
+
+    // Выбрать всех пользователей
+    const selectAllUsers = computed({
+        get: () => {
+            return rouletteSelectedUsers.value.length === activeUsers.value.length && activeUsers.value.length > 0;
+        },
+        set: (val) => {
+            if (val) {
+                rouletteSelectedUsers.value = activeUsers.value.map(u => u.id);
+            } else {
+                rouletteSelectedUsers.value = [];
+            }
+        }
+    });
+
+    // Выбрать все группы
+    const selectAllGroups = computed({
+        get: () => {
+            return rouletteSelectedGroups.value.length === groups.value.length && groups.value.length > 0;
+        },
+        set: (val) => {
+            if (val) {
+                rouletteSelectedGroups.value = groups.value.map(g => g.id);
+            } else {
+                rouletteSelectedGroups.value = [];
+            }
+        }
+    });
+
+    // Функция для отображения выбранных групп
+    const getSelectedGroupsNames = () => {
+        if (!form.value.groups || form.value.groups.length === 0) return '';
+        const selectedNames = form.value.groups.map(groupId => {
+            const group = groups.value.find(g => g.id === groupId);
+            return group ? group.name : '';
+        }).filter(name => name);
+        return selectedNames.join(', ');
+    };
+
+    // Переключение выпадающего списка групп
+    const toggleGroupsDropdown = () => {
+        groupsDropdownOpen.value = !groupsDropdownOpen.value;
+    };
+
+    // Закрытие выпадающего списка при клике вне
+    const closeDropdownOnClickOutside = (event) => {
+        const dropdown = document.querySelector('.dropdown-checkboxes');
+        if (dropdown && !dropdown.contains(event.target) && groupsDropdownOpen.value) {
+            groupsDropdownOpen.value = false;
+        }
+    };
 
     // Загрузка Jira конфига
     const loadJiraConfig = async () => {
@@ -414,6 +472,23 @@ createApp({
         rouletteSelectedUsers.value = [];
     };
 
+    // Функции для toggle
+    const toggleAllUsers = () => {
+        if (selectAllUsers.value) {
+            rouletteSelectedUsers.value = activeUsers.value.map(u => u.id);
+        } else {
+            rouletteSelectedUsers.value = [];
+        }
+    };
+
+    const toggleAllGroups = () => {
+        if (selectAllGroups.value) {
+            rouletteSelectedGroups.value = groups.value.map(g => g.id);
+        } else {
+            rouletteSelectedGroups.value = [];
+        }
+    };
+
     // Функция вращения рулетки с анимацией
     const spinRoulette = () => {
         if (rouletteFinalUsersList.value.length === 0) return;
@@ -547,12 +622,31 @@ createApp({
     let editingUserId = null;
     const deleteUser = ref(null);
 
+    // Инициализация очереди с фиксированными номерами (без запуска таймера)
+    const initQueue = () => {
+        originalQueueOrder.value = activeUsers.value.map((user, index) => ({
+            ...user,
+            fixedNumber: index + 1
+        }));
+
+        queueUsers.value = originalQueueOrder.value.map(u => ({ ...u }));
+
+        if (queueUsers.value.length > 0) {
+            currentUser.value = queueUsers.value[0];
+            resetTimerOnly();
+        } else {
+            currentUser.value = null;
+            resetTimer();
+        }
+    };
+
     const loadUsers = async () => {
       const res = await fetch("/api/users");
       const users = await res.json();
       activeUsers.value = users.filter((u) => u.status === "Активен");
       inactiveUsers.value = users.filter((u) => u.status !== "Активен");
-      shuffleUsers(false);
+
+      initQueue();
     };
 
     const downloadConfig = async () => {
@@ -687,7 +781,15 @@ createApp({
     };
 
     const shuffleUsers = (shouldStartTimer = true) => {
-      queueUsers.value = [...activeUsers.value];
+      if (originalQueueOrder.value.length === 0) {
+        originalQueueOrder.value = activeUsers.value.map((user, index) => ({
+            ...user,
+            fixedNumber: index + 1
+        }));
+      }
+
+      queueUsers.value = originalQueueOrder.value.map(u => ({ ...u }));
+
       for (let i = queueUsers.value.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [queueUsers.value[i], queueUsers.value[j]] = [queueUsers.value[j], queueUsers.value[i]];
@@ -705,12 +807,28 @@ createApp({
       }
     };
 
+    const resetToOriginalOrder = () => {
+      if (originalQueueOrder.value.length > 0) {
+        queueUsers.value = originalQueueOrder.value.map(u => ({ ...u }));
+        lateUsers.value.clear();
+        if (queueUsers.value.length > 0) {
+          currentUser.value = queueUsers.value[0];
+          resetAndStartTimer();
+        }
+      }
+    };
+
     const nextUser = () => {
       if (queueUsers.value.length === 0) return;
+
       const currentIndex = queueUsers.value.findIndex((u) => u.id === currentUser.value.id);
       if (currentIndex !== -1) {
+        if (lateUsers.value.has(currentUser.value.id)) {
+          lateUsers.value.delete(currentUser.value.id);
+        }
         queueUsers.value.splice(currentIndex, 1);
       }
+
       if (queueUsers.value.length > 0) {
         currentUser.value = queueUsers.value[0];
         resetAndStartTimer();
@@ -726,6 +844,7 @@ createApp({
       if (currentIndex !== -1) {
         const lateUser = queueUsers.value.splice(currentIndex, 1)[0];
         queueUsers.value.push(lateUser);
+        lateUsers.value.add(lateUser.id);
         currentUser.value = queueUsers.value[0];
         resetAndStartTimer();
       }
@@ -772,6 +891,7 @@ createApp({
       modalTitle.value = "Добавить пользователя";
       form.value = { surname: "", name: "", patronymic: "", status: "Активен", groups: [] };
       editingUserId = null;
+      groupsDropdownOpen.value = false;
       document.getElementById("userModal").classList.add("show");
     };
 
@@ -785,6 +905,7 @@ createApp({
         groups: user.groups ? [...user.groups] : []
       };
       editingUserId = user.id;
+      groupsDropdownOpen.value = false;
       document.getElementById("userModal").classList.add("show");
     };
 
@@ -879,63 +1000,6 @@ createApp({
       });
     };
 
-        // Внутри setup() добавьте:
-    const showUsersPanel = ref(true);
-    const showGroupsPanel = ref(true);
-
-    const toggleUsersPanel = () => {
-        showUsersPanel.value = !showUsersPanel.value;
-    };
-
-    const toggleGroupsPanel = () => {
-        showGroupsPanel.value = !showGroupsPanel.value;
-    };
-
-        // Выбрать всех пользователей
-    const selectAllUsers = computed({
-        get: () => {
-            return rouletteSelectedUsers.value.length === activeUsers.value.length && activeUsers.value.length > 0;
-        },
-        set: (val) => {
-            if (val) {
-                rouletteSelectedUsers.value = activeUsers.value.map(u => u.id);
-            } else {
-                rouletteSelectedUsers.value = [];
-            }
-        }
-    });
-
-    // Выбрать все группы
-    const selectAllGroups = computed({
-        get: () => {
-            return rouletteSelectedGroups.value.length === groups.value.length && groups.value.length > 0;
-        },
-        set: (val) => {
-            if (val) {
-                rouletteSelectedGroups.value = groups.value.map(g => g.id);
-            } else {
-                rouletteSelectedGroups.value = [];
-            }
-        }
-    });
-
-    // Функции для toggle
-    const toggleAllUsers = () => {
-        if (selectAllUsers.value) {
-            rouletteSelectedUsers.value = activeUsers.value.map(u => u.id);
-        } else {
-            rouletteSelectedUsers.value = [];
-        }
-    };
-
-    const toggleAllGroups = () => {
-        if (selectAllGroups.value) {
-            rouletteSelectedGroups.value = groups.value.map(g => g.id);
-        } else {
-            rouletteSelectedGroups.value = [];
-        }
-    };
-
     const onDragOver = (event) => {
       event.preventDefault();
       event.dataTransfer.dropEffect = "move";
@@ -973,6 +1037,7 @@ createApp({
       loadUsers();
       loadJiraConfig();
       loadGroups();
+      document.addEventListener('click', closeDropdownOnClickOutside);
     });
 
     onUnmounted(() => {
@@ -983,6 +1048,7 @@ createApp({
         clearInterval(rollingInterval);
       }
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      document.removeEventListener('click', closeDropdownOnClickOutside);
     });
 
     return {
@@ -1069,15 +1135,19 @@ createApp({
       rollerOffset,
       spinRoulette,
       resetRoulette,
-         selectAllUsers,
-        selectAllGroups,
-    toggleAllUsers,
-    toggleAllGroups,
-        showUsersPanel,
-    showGroupsPanel,
-    toggleUsersPanel,
-    toggleGroupsPanel,
-      clearRouletteSelection
+      clearRouletteSelection,
+      selectAllUsers,
+      selectAllGroups,
+      toggleAllUsers,
+      toggleAllGroups,
+      // Тостера
+      originalQueueOrder,
+      lateUsers,
+      resetToOriginalOrder,
+      // Выпадающий список групп
+      groupsDropdownOpen,
+      toggleGroupsDropdown,
+      getSelectedGroupsNames
     };
   },
 }).mount("#app");

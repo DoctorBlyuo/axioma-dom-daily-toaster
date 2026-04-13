@@ -21,7 +21,12 @@ jira:
   origin: https://oneproject.it-one.ru
   url: https://oneproject.it-one.ru/jira/secure/RapidBoard.jspa?rapidView=327
 users:
-- groups: []
+- groups:
+  - 1
+  - 2
+  - 3
+  - 5
+  - 4
   name: Margarita
   patronymic: ''
   status: Активен

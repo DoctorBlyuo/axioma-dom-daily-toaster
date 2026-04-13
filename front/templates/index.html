@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Axioma Daily Toaster</title>
+    <title>AXIOMA Daily Toaster</title>
     <link rel="stylesheet" href="/static/css/style.css"/>
 </head>
 <body>
@@ -43,7 +43,7 @@
         <div class="tab-content" :class="{ active: activeTab === 'toaster' }">
             <div class="toaster-card">
                 <div class="toaster-header">
-                    <h1>🍞 Axioma Daily Toaster</h1>
+                    <h1>🍞 AXIOMA Daily Toaster</h1>
                 </div>
                 <div class="toaster-body">
                     <div class="toaster-main">
@@ -175,17 +175,18 @@
                     <div class="toaster-sidebar">
                         <h3>Очередь выступлений</h3>
                         <div class="queue-list" v-if="queueUsers.length > 0">
-                            <div
-                                    v-for="(user, idx) in queueUsers"
-                                    :key="user.id"
-                                    class="queue-item"
-                                    :class="{ active: currentUser && currentUser.id === user.id }"
-                                    @click="selectUser(user)"
-                            >
-                                <div class="queue-number">{{ idx + 1 }}</div>
+                            <div v-for="(user, idx) in queueUsers" :key="user.id"
+                                 class="queue-item"
+                                 :class="{
+                                     'active': currentUser && currentUser.id === user.id,
+                                     'late': lateUsers.has(user.id)
+                                 }"
+                                 @click="selectUser(user)">
+                                <div class="queue-number">{{ user.fixedNumber || idx + 1 }}</div>
                                 <div class="queue-name">
                                     {{ user.surname }} {{ user.name }} {{ user.patronymic }}
                                 </div>
+                                <div class="late-badge" v-if="lateUsers.has(user.id)">⏰</div>
                             </div>
                         </div>
                         <div v-else class="empty-state">
@@ -202,7 +203,7 @@
             <div class="roulette-game-container">
                 <!-- Заголовок -->
                 <div class="game-header">
-                    <h1 class="game-title">🎲 Кто сегодня?</h1>
+                    <h1 class="game-title">🎲 Лес рук!</h1>
                     <p class="game-subtitle">Выбери участников и крути рулетку!</p>
                 </div>
 
@@ -506,6 +507,7 @@
 
     <!-- Модалка добавления/редактирования пользователя -->
     <!-- Модалка добавления/редактирования пользователя -->
+    <!-- Модалка добавления/редактирования пользователя -->
     <div id="userModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">{{ modalTitle }}</div>
@@ -532,11 +534,19 @@
                 </div>
                 <div class="form-group">
                     <label>Группы</label>
-                    <div class="groups-checkboxes">
-                        <label v-for="group in groups" :key="group.id" class="group-checkbox">
-                            <input type="checkbox" :value="group.id" v-model="form.groups">
-                            <span :style="{ color: group.color }">{{ group.name }}</span>
-                        </label>
+                    <div class="dropdown-checkboxes" :class="{ 'open': groupsDropdownOpen }">
+                        <div class="dropdown-header" @click="toggleGroupsDropdown">
+                        <span class="dropdown-selected">
+                            {{ getSelectedGroupsNames() || 'Выберите группы' }}
+                        </span>
+                            <span class="dropdown-arrow">{{ groupsDropdownOpen ? '▲' : '▼' }}</span>
+                        </div>
+                        <div class="dropdown-list" v-if="groupsDropdownOpen">
+                            <label v-for="group in groups" :key="group.id" class="dropdown-item">
+                                <input type="checkbox" :value="group.id" v-model="form.groups">
+                                <span :style="{ color: group.color }">{{ group.name }}</span>
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>

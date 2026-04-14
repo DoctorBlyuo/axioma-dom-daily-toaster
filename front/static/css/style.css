@@ -1313,7 +1313,7 @@ body {
 
 /* Опоздавшие пользователи */
 .queue-item.late {
-    background: #fff3e0;
+    background: #fd7e14;
     border-left: 4px solid #fd7e14;
     position: relative;
 }

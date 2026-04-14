@@ -1340,7 +1340,7 @@ body {
 
 
 /* ============================================ */
-/* РУЛЕТКА - ПОЛНЫЙ БЛОК */
+/* РУЛЕТКА - ПОЛНЫЙ CSS */
 /* ============================================ */
 .roulette-layout-new {
     display: flex;
@@ -1370,7 +1370,7 @@ body {
     min-height: 0;
 }
 
-/* Шапки - единый стиль для левой и центральной панели */
+/* Шапки */
 .roulette-left-panel .panel-header,
 .roulette-center-panel .panel-header {
     display: flex;
@@ -1415,35 +1415,37 @@ body {
     min-height: 0;
 }
 
-.user-checkbox-item, .group-checkbox-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 12px;
-    margin-bottom: 6px;
+/* Drag & Drop элементы */
+.user-drag-roulette {
     background: #f8f9fa;
     border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    padding: 10px;
+    margin-bottom: 8px;
+    cursor: grab;
+    transition: all 0.2s;
+    border: 1px solid #e9ecef;
 }
 
-.user-checkbox-item:hover, .group-checkbox-item:hover {
-    background: linear-gradient(135deg, #e8eef5, #e0e7ff);
-    transform: translateX(4px);
+.user-drag-roulette:active {
+    cursor: grabbing;
 }
 
-.user-checkbox-item input, .group-checkbox-item input {
-    margin: 0;
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-    accent-color: #667eea;
+.user-drag-roulette:hover {
+    background: #e8eef5;
+    transform: translateX(3px);
+    border-color: #667eea;
 }
 
-.user-name {
-    flex: 1;
-    font-size: 12px;
+.user-drag-roulette-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.user-drag-roulette-name {
     font-weight: 500;
+    font-size: 13px;
     color: #333;
 }
 
@@ -1455,18 +1457,62 @@ body {
     color: #28a745;
 }
 
-.group-name {
-    flex: 1;
-    font-size: 12px;
-    font-weight: 500;
+.user-drag-roulette-groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
 }
 
-.group-count {
+.user-group-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
     font-size: 10px;
+    color: white;
+    font-weight: bold;
+}
+
+.group-drag-roulette {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 8px;
+    cursor: grab;
+    transition: all 0.2s;
+    border: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.group-drag-roulette:active {
+    cursor: grabbing;
+}
+
+.group-drag-roulette:hover {
+    background: #e8eef5;
+    transform: translateX(3px);
+    border-color: #667eea;
+}
+
+.group-drag-roulette-name {
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.group-drag-roulette-count {
+    font-size: 11px;
     color: #999;
 }
 
-/* Центральная панель (25%) */
+.empty-message {
+    text-align: center;
+    padding: 20px;
+    color: #999;
+    font-size: 12px;
+}
+
+/* Центральная панель */
 .roulette-center-panel {
     width: 25%;
     background: white;
@@ -1520,6 +1566,17 @@ body {
     min-height: 0;
 }
 
+.drop-zone-roulette {
+    min-height: 300px;
+    transition: all 0.2s;
+}
+
+.drop-zone-roulette.drag-over {
+    background: #e0e7ff;
+    border: 2px dashed #667eea;
+    border-radius: 12px;
+}
+
 .selected-user-item {
     display: flex;
     align-items: center;
@@ -1560,6 +1617,26 @@ body {
     word-break: break-word;
 }
 
+.remove-from-roulette {
+    background: #dc3545;
+    color: white;
+    border: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.remove-from-roulette:hover {
+    background: #c82333;
+    transform: scale(1.05);
+}
+
 .empty-selected {
     text-align: center;
     padding: 40px 20px;
@@ -1571,7 +1648,13 @@ body {
     margin-bottom: 10px;
 }
 
-/* Правая панель - рулетка (50%) */
+.hint-small {
+    font-size: 11px;
+    margin-top: 5px;
+    color: #bbb;
+}
+
+/* Правая панель - рулетка */
 .roulette-right-panel {
     width: 50%;
     background: linear-gradient(135deg, #ffffff, #f8f9ff);
@@ -1583,7 +1666,23 @@ body {
     gap: 15px;
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
     position: relative;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 100%;
+}
+
+.roulette-right-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+.roulette-right-panel::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.roulette-right-panel::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
 }
 
 .roulette-right-panel::before {
@@ -1595,6 +1694,11 @@ body {
     height: 200%;
     background: radial-gradient(circle, rgba(102,126,234,0.05) 0%, transparent 70%);
     pointer-events: none;
+}
+
+.roulette-header {
+    flex-shrink: 0;
+    text-align: center;
 }
 
 .roulette-header h2 {
@@ -1616,34 +1720,22 @@ body {
     50% { background-position: 100% 50%; }
 }
 
-/* Увеличенный спиннер */
+/* Спиннер - адаптивный */
 .spinner-area {
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
     width: 100%;
+    flex-shrink: 0;
 }
 
 .spinner-wrapper {
     position: relative;
-    width: 420px;
-    height: 420px;
+    width: 100%;
+    max-width: 380px;
+    aspect-ratio: 1 / 1;
     margin: 0 auto;
-}
-
-@media (max-width: 1200px) {
-    .spinner-wrapper {
-        width: 350px;
-        height: 350px;
-    }
-}
-
-@media (max-width: 768px) {
-    .spinner-wrapper {
-        width: 260px;
-        height: 260px;
-    }
 }
 
 .neon-glow {
@@ -1723,7 +1815,6 @@ body {
     border-right: 2px solid rgba(255,255,255,0.3);
     display: flex;
     justify-content: center;
-    padding-top: 35px;
 }
 
 .wheel-slice:nth-child(even) {
@@ -1734,6 +1825,7 @@ body {
     font-size: 28px;
     color: white;
     text-shadow: 0 0 5px rgba(0,0,0,0.3);
+    padding-top: 35px;
 }
 
 .wheel-center {
@@ -1818,17 +1910,20 @@ body {
     position: relative;
     background: linear-gradient(135deg, #667eea, #764ba2);
     border: none;
-    padding: 12px 35px;
+    padding: 12px 30px;
     border-radius: 50px;
     font-size: 18px;
     font-weight: bold;
     color: white;
     cursor: pointer;
     transition: all 0.3s ease;
-    width: 100%;
+    width: auto;
+    min-width: 200px;
     max-width: 250px;
     overflow: hidden;
     box-shadow: 0 5px 20px rgba(102,126,234,0.4);
+    flex-shrink: 0;
+    margin: 5px 0;
 }
 
 .spin-btn:hover:not(:disabled) {
@@ -1867,21 +1962,19 @@ body {
     height: 200%;
 }
 
-/* Результат - компактный контейнер, крупное имя */
+/* Результат */
 .roulette-right-panel .result-area {
     width: 100%;
     text-align: center;
+    flex-shrink: 0;
 }
 
 .roulette-right-panel .result-card {
     background: linear-gradient(135deg, #f8f9fa, #fff);
     border-radius: 16px;
     padding: 12px 20px;
-    border: 2px solid transparent;
-    background-image: linear-gradient(white, white), linear-gradient(135deg, #667eea, #764ba2);
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
-    animation: resultPop 0.6s ease-out;
+    border: 2px solid #667eea;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     max-width: 320px;
     margin: 0 auto;
 }
@@ -1942,6 +2035,7 @@ body {
 .roulette-right-panel .waiting-area {
     text-align: center;
     padding: 15px;
+    flex-shrink: 0;
 }
 
 .roulette-right-panel .waiting-message {
@@ -1955,48 +2049,128 @@ body {
     opacity: 0.6;
 }
 
-/* Адаптивность */
+/* Адаптивность для разных размеров экрана */
+@media (min-width: 1600px) {
+    .spinner-wrapper {
+        max-width: 480px;
+    }
+    .wheel-center {
+        width: 130px;
+        height: 130px;
+    }
+    .wheel-center-icon {
+        font-size: 60px;
+    }
+    .slice-label {
+        font-size: 34px;
+        padding-top: 45px;
+    }
+    .roulette-header h2 {
+        font-size: 32px;
+    }
+    .spin-btn {
+        padding: 14px 45px;
+        font-size: 20px;
+        min-width: 220px;
+    }
+    .result-name {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 1400px) {
+    .spinner-wrapper {
+        max-width: 350px;
+    }
+    .wheel-center {
+        width: 95px;
+        height: 95px;
+    }
+    .wheel-center-icon {
+        font-size: 42px;
+    }
+    .slice-label {
+        font-size: 24px;
+        padding-top: 30px;
+    }
+    .spin-btn {
+        padding: 10px 25px;
+        font-size: 16px;
+        min-width: 180px;
+    }
+    .roulette-header h2 {
+        font-size: 24px;
+    }
+    .result-name {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .roulette-layout-new {
+        gap: 12px;
+        padding: 12px;
+    }
+    .spinner-wrapper {
+        max-width: 300px;
+    }
+    .wheel-center {
+        width: 85px;
+        height: 85px;
+    }
+    .wheel-center-icon {
+        font-size: 38px;
+    }
+    .slice-label {
+        font-size: 22px;
+        padding-top: 25px;
+    }
+    .spin-btn {
+        padding: 8px 20px;
+        font-size: 14px;
+        min-width: 160px;
+    }
+    .roulette-header h2 {
+        font-size: 22px;
+    }
+    .result-name {
+        font-size: 18px;
+    }
+}
+
 @media (max-width: 1024px) {
     .roulette-layout-new {
         flex-direction: column;
     }
-
     .roulette-left-panel {
         width: 100%;
         flex-direction: row;
         gap: 15px;
     }
-
+    .roulette-left-panel .panel-section {
+        flex: 1;
+    }
     .roulette-center-panel {
         width: 100%;
         min-height: 200px;
     }
-
     .roulette-right-panel {
         width: 100%;
+        max-height: 550px;
     }
-
     .spinner-wrapper {
-        width: 320px;
-        height: 320px;
+        max-width: 280px;
     }
-
     .wheel-center {
-        width: 90px;
-        height: 90px;
+        width: 80px;
+        height: 80px;
     }
-
     .wheel-center-icon {
-        font-size: 40px;
+        font-size: 35px;
     }
-
     .slice-label {
-        font-size: 22px;
-        padding-top: 25px;
-    }
-
-    .roulette-right-panel .result-name {
         font-size: 20px;
+        padding-top: 22px;
     }
 }
 
@@ -2004,32 +2178,84 @@ body {
     .roulette-left-panel {
         flex-direction: column;
     }
-
     .spinner-wrapper {
-        width: 260px;
-        height: 260px;
+        max-width: 260px;
     }
-
     .wheel-center {
         width: 70px;
         height: 70px;
     }
-
     .wheel-center-icon {
-        font-size: 32px;
+        font-size: 30px;
     }
-
     .slice-label {
         font-size: 18px;
         padding-top: 18px;
     }
-
-    .roulette-right-panel .result-name {
-        font-size: 18px;
+    .roulette-header h2 {
+        font-size: 20px;
     }
-
-    .roulette-right-panel .result-card {
+    .spin-btn {
+        padding: 8px 18px;
+        font-size: 14px;
+        min-width: 150px;
+    }
+    .result-name {
+        font-size: 16px;
+    }
+    .result-card {
         padding: 10px 15px;
+    }
+    .result-icon {
+        font-size: 28px;
+    }
+    .selected-user-name {
+        font-size: 11px;
+    }
+    .user-drag-roulette-name {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .spinner-wrapper {
+        max-width: 220px;
+    }
+    .wheel-center {
+        width: 60px;
+        height: 60px;
+    }
+    .wheel-center-icon {
+        font-size: 26px;
+    }
+    .slice-label {
+        font-size: 16px;
+        padding-top: 15px;
+    }
+    .wheel-outer {
+        padding: 10px;
+    }
+    .spinner-pointer {
+        font-size: 30px;
+        top: -25px;
+    }
+    .spin-btn {
+        padding: 8px 15px;
+        font-size: 13px;
+        min-width: 130px;
+    }
+    .result-name {
+        font-size: 14px;
+    }
+    .selected-user-number {
+        width: 20px;
+        height: 20px;
+        font-size: 9px;
+    }
+    .remove-from-roulette {
+        width: 18px;
+        height: 18px;
+        font-size: 9px;
     }
 }
 

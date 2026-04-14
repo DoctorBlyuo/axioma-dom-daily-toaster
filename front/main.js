@@ -768,17 +768,51 @@ createApp({
     };
 
     const downloadConfig = async () => {
-      try {
-        const response = await fetch("/api/users");
-        const users = await response.json();
-        let yamlContent = "users:\n";
-        users.forEach(user => {
-          yamlContent += `  - surname: ${user.surname}\n`;
-          yamlContent += `    name: ${user.name}\n`;
-          yamlContent += `    patronymic: ${user.patronymic || ''}\n`;
-          yamlContent += `    status: ${user.status}\n`;
-          yamlContent += `    groups: ${JSON.stringify(user.groups || [])}\n`;
+    try {
+        // Получаем всех пользователей
+        const usersResponse = await fetch("/api/users");
+        const users = await usersResponse.json();
+
+        // Получаем группы
+        const groupsResponse = await fetch("/api/groups");
+        const groupsData = await groupsResponse.json();
+
+        // Получаем Jira конфиг
+        const jiraResponse = await fetch("/api/config");
+        const jiraData = await jiraResponse.json();
+
+        // Формируем полный YAML контент
+        let yamlContent = "# AXIOMA Daily Toaster Configuration\n";
+        yamlContent += "# Users, Groups and Jira settings\n\n";
+
+        // Группы
+        yamlContent += "groups:\n";
+        groupsData.forEach(group => {
+            yamlContent += `  - id: ${group.id}\n`;
+            yamlContent += `    name: "${group.name}"\n`;
+            yamlContent += `    color: "${group.color}"\n`;
         });
+
+        yamlContent += "\n";
+
+        // Jira
+        yamlContent += "jira:\n";
+        yamlContent += `  url: "${jiraData.url || ''}"\n`;
+        yamlContent += `  origin: "${jiraData.origin || ''}"\n`;
+
+        yamlContent += "\n";
+
+        // Пользователи
+        yamlContent += "users:\n";
+        users.forEach(user => {
+            yamlContent += `  - surname: ${user.surname}\n`;
+            yamlContent += `    name: ${user.name}\n`;
+            yamlContent += `    patronymic: ${user.patronymic || ''}\n`;
+            yamlContent += `    status: ${user.status}\n`;
+            yamlContent += `    groups: ${JSON.stringify(user.groups || [])}\n`;
+        });
+
+        // Создаем и скачиваем файл
         const blob = new Blob([yamlContent], { type: "text/yaml" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -788,10 +822,12 @@ createApp({
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-      } catch (error) {
+
+        alert("Конфигурация успешно скачана!");
+    } catch (error) {
         console.error("Download error:", error);
-        alert("Ошибка при скачивании конфига");
-      }
+        alert("Ошибка при скачивании конфига: " + error.message);
+    }
     };
 
     const openUploadModal = () => {

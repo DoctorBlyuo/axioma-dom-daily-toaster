@@ -21,54 +21,42 @@ jira:
   origin: https://oneproject.it-one.ru
   url: https://oneproject.it-one.ru/jira/secure/RapidBoard.jspa?rapidView=327
 users:
-- groups:
-  - 2
-  - 6
+- groups: []
   name: Margarita
   patronymic: ''
   status: Активен
   surname: Zhivotovskaya
-- groups:
-  - 2
-  - 6
+- groups: []
   name: Valeriy
   patronymic: null
   status: Активен
   surname: Sukhorukov
-- groups:
-  - 5
-  - 4
-  - 6
+- groups: []
   name: Elizaveta
   patronymic: ''
   status: Активен
   surname: Starovoitova
-- groups:
-  - 2
+- groups: []
   name: Andrey
   patronymic: null
   status: Активен
   surname: Shapovalov
-- groups:
-  - 2
+- groups: []
   name: Alexander
   patronymic: null
   status: Активен
   surname: Petrenko
-- groups:
-  - 3
+- groups: []
   name: Kseniya
   patronymic: null
   status: Активен
   surname: Ostanina
-- groups:
-  - 3
+- groups: []
   name: Polina
   patronymic: ''
   status: Активен
   surname: Ognegina
-- groups:
-  - 3
+- groups: []
   name: Igor
   patronymic: ''
   status: Активен
@@ -87,12 +75,14 @@ users:
   patronymic: null
   status: Активен
   surname: Khalibulov
-- groups: []
+- groups:
+  - 3
   name: Aleksei
   patronymic: null
   status: Активен
   surname: Korolkov
-- groups: []
+- groups:
+  - 3
   name: Alina
   patronymic: null
   status: Активен
@@ -102,7 +92,8 @@ users:
   patronymic: null
   status: Активен
   surname: Karsakov
-- name: Rauf
+- groups: []
+  name: Rauf
   patronymic: null
   status: Активен
   surname: Gasanov
@@ -164,7 +155,9 @@ users:
   patronymic: null
   status: Активен
   surname: Ostanina
-- name: Dariya
+- groups:
+  - 3
+  name: Dariya
   patronymic: null
   status: Активен
   surname: Markina

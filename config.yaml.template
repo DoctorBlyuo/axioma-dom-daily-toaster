@@ -1,0 +1,44 @@
+groups:
+- color: '#4CAF50'
+  id: 1
+  name: Разработчики
+- color: '#FF9800'
+  id: 2
+  name: Тестировщики
+- color: '#00BCD4'
+  id: 3
+  name: Автотестировщики
+- color: '#9C27B0'
+  id: 4
+  name: Аналитики
+- color: '#795548'
+  id: 5
+  name: Технические писатели
+- color: '#F44336'
+  id: 6
+  name: Менеджеры
+- color: '#667eea'
+  id: 7
+  name: Техническая поддержка
+jira:
+  origin: https://oneproject.it-one.ru
+  url: https://oneproject.it-one.ru/jira/secure/RapidBoard.jspa?rapidView=327
+users:
+- groups:
+  - 1
+  name: Иван
+  patronymic: Иванович
+  status: Активен
+  surname: Иванов
+- groups:
+  - 2
+  name: Федор
+  patronymic: Федорович
+  status: Активен
+  surname: Федоров
+- groups:
+  - 6
+  name: Светлана
+  patronymic: Яковлевна
+  status: Активен
+  surname: Светлановна

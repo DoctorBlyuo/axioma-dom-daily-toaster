@@ -935,73 +935,95 @@ createApp({
     };
 
     const shuffleUsers = (shouldStartTimer = true) => {
-      if (originalQueueOrder.value.length === 0) {
-        originalQueueOrder.value = activeUsers.value.map((user, index) => ({
+        // Сохраняем оригинальный порядок пользователей с их изначальными номерами
+        if (originalQueueOrder.value.length === 0) {
+            originalQueueOrder.value = activeUsers.value.map((user, index) => ({
+                ...user,
+                fixedNumber: index + 1
+            }));
+        }
+
+        // Сбрасываем список опоздавших
+        lateUsers.value.clear();
+
+        // Копируем пользователей из оригинала
+        const usersToShuffle = originalQueueOrder.value.map(u => ({ ...u }));
+
+        // Перемешиваем массив
+        for (let i = usersToShuffle.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [usersToShuffle[i], usersToShuffle[j]] = [usersToShuffle[j], usersToShuffle[i]];
+        }
+
+        // Присваиваем новые номера в порядке очереди (1, 2, 3...)
+        queueUsers.value = usersToShuffle.map((user, index) => ({
             ...user,
             fixedNumber: index + 1
         }));
-      }
 
-      queueUsers.value = originalQueueOrder.value.map(u => ({ ...u }));
-
-      for (let i = queueUsers.value.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [queueUsers.value[i], queueUsers.value[j]] = [queueUsers.value[j], queueUsers.value[i]];
-      }
-      if (queueUsers.value.length > 0) {
-        currentUser.value = queueUsers.value[0];
-        if (shouldStartTimer) {
-          resetAndStartTimer();
+        if (queueUsers.value.length > 0) {
+            currentUser.value = queueUsers.value[0];
+            if (shouldStartTimer) {
+                resetAndStartTimer();
+            } else {
+                resetTimerOnly();
+            }
         } else {
-          resetTimerOnly();
+            currentUser.value = null;
+            resetTimer();
         }
-      } else {
-        currentUser.value = null;
-        resetTimer();
-      }
     };
 
     const resetToOriginalOrder = () => {
-      if (originalQueueOrder.value.length > 0) {
-        queueUsers.value = originalQueueOrder.value.map(u => ({ ...u }));
-        lateUsers.value.clear();
-        if (queueUsers.value.length > 0) {
-          currentUser.value = queueUsers.value[0];
-          resetAndStartTimer();
+        if (originalQueueOrder.value.length > 0) {
+            // Сбрасываем список опоздавших
+            lateUsers.value.clear();
+
+            // Восстанавливаем оригинальный порядок с исходными номерами
+            queueUsers.value = originalQueueOrder.value.map((user, index) => ({
+                ...user,
+                fixedNumber: index + 1
+            }));
+
+            if (queueUsers.value.length > 0) {
+                currentUser.value = queueUsers.value[0];
+                resetAndStartTimer();
+            }
         }
-      }
     };
 
     const nextUser = () => {
-      if (queueUsers.value.length === 0) return;
+        if (queueUsers.value.length === 0) return;
 
-      const currentIndex = queueUsers.value.findIndex((u) => u.id === currentUser.value.id);
-      if (currentIndex !== -1) {
-        if (lateUsers.value.has(currentUser.value.id)) {
-          lateUsers.value.delete(currentUser.value.id);
+        const currentIndex = queueUsers.value.findIndex((u) => u.id === currentUser.value.id);
+        if (currentIndex !== -1) {
+            if (lateUsers.value.has(currentUser.value.id)) {
+                lateUsers.value.delete(currentUser.value.id);
+            }
+            queueUsers.value.splice(currentIndex, 1);
         }
-        queueUsers.value.splice(currentIndex, 1);
-      }
 
-      if (queueUsers.value.length > 0) {
-        currentUser.value = queueUsers.value[0];
-        resetAndStartTimer();
-      } else {
-        currentUser.value = null;
-        resetTimer();
-      }
+        // Не переназначаем номера, они остаются как были
+        if (queueUsers.value.length > 0) {
+            currentUser.value = queueUsers.value[0];
+            resetAndStartTimer();
+        } else {
+            currentUser.value = null;
+            resetTimer();
+        }
     };
 
     const markLate = () => {
-      if (!currentUser.value) return;
-      const currentIndex = queueUsers.value.findIndex((u) => u.id === currentUser.value.id);
-      if (currentIndex !== -1) {
-        const lateUser = queueUsers.value.splice(currentIndex, 1)[0];
-        queueUsers.value.push(lateUser);
-        lateUsers.value.add(lateUser.id);
-        currentUser.value = queueUsers.value[0];
-        resetAndStartTimer();
-      }
+        if (!currentUser.value) return;
+        const currentIndex = queueUsers.value.findIndex((u) => u.id === currentUser.value.id);
+        if (currentIndex !== -1) {
+            const lateUser = queueUsers.value.splice(currentIndex, 1)[0];
+            // Сохраняем fixedNumber у опоздавшего
+            queueUsers.value.push(lateUser);
+            lateUsers.value.add(lateUser.id);
+            currentUser.value = queueUsers.value[0];
+            resetAndStartTimer();
+        }
     };
 
     const selectUser = (user) => {

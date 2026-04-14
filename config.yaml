@@ -28,7 +28,7 @@ users:
   surname: Zhivotovskaya
 - groups: []
   name: Valeriy
-  patronymic: null
+  patronymic: ''
   status: Активен
   surname: Sukhorukov
 - groups: []
@@ -38,17 +38,17 @@ users:
   surname: Starovoitova
 - groups: []
   name: Andrey
-  patronymic: null
+  patronymic: ''
   status: Активен
   surname: Shapovalov
 - groups: []
   name: Alexander
-  patronymic: null
+  patronymic: ''
   status: Активен
   surname: Petrenko
 - groups: []
   name: Kseniya
-  patronymic: null
+  patronymic: ''
   status: Активен
   surname: Ostanina
 - groups: []
@@ -63,73 +63,79 @@ users:
   surname: Nedomolkin
 - groups: []
   name: Dariya
-  patronymic: null
+  patronymic: ''
   status: Активен
   surname: Markina
 - groups: []
   name: Sergey
-  patronymic: null
+  patronymic: ''
   status: Активен
   surname: Lukayanov
-- name: Rinat
-  patronymic: null
+- groups: []
+  name: Rinat
+  patronymic: ''
   status: Активен
   surname: Khalibulov
 - groups:
   - 3
   name: Aleksei
-  patronymic: null
+  patronymic: ''
   status: Активен
   surname: Korolkov
 - groups:
   - 3
   name: Alina
-  patronymic: null
+  patronymic: ''
   status: Активен
   surname: Kobzar
 - groups: []
   name: Rustam
-  patronymic: null
+  patronymic: ''
   status: Активен
   surname: Karsakov
 - groups: []
   name: Rauf
-  patronymic: null
+  patronymic: ''
   status: Активен
   surname: Gasanov
-- name: Aleksandr
-  patronymic: null
+- groups: []
+  name: Aleksandr
+  patronymic: ''
   status: Активен
   surname: Garibov
-- name: Anastasiya
-  patronymic: null
+- groups: []
+  name: Anastasiya
+  patronymic: ''
   status: Активен
   surname: Fedoseeva
-- name: Julia
-  patronymic: null
+- groups: []
+  name: Julia
+  patronymic: ''
   status: Активен
   surname: Ababina
-- name: Julia
-  patronymic: null
+- groups: []
+  name: Julia
+  patronymic: ''
   status: Активен
   surname: Zvereva
-- name: Sergey
-  patronymic: null
+- groups: []
+  name: Sergey
+  patronymic: ''
   status: Активен
   surname: Korotkiy
 - groups: []
   name: Anton
-  patronymic: null
+  patronymic: ''
   status: Активен
   surname: Schastnyi
 - groups: []
   name: Ivan
-  patronymic: null
+  patronymic: ''
   status: Активен
   surname: Nomokonov
 - groups: []
   name: Anna
-  patronymic: null
+  patronymic: ''
   status: Активен
   surname: Kogan
 - groups: []
@@ -139,30 +145,32 @@ users:
   surname: Zhivotovskaya
 - groups: []
   name: Alexey
-  patronymic: null
+  patronymic: ''
   status: Активен
   surname: Vasiliev
-- name: Alexander
-  patronymic: null
+- groups: []
+  name: Alexander
+  patronymic: ''
   status: Активен
   surname: Petrenko
 - groups: []
   name: Valeriy
-  patronymic: null
+  patronymic: ''
   status: Активен
   surname: Sukhorukov
-- name: Kseniya
-  patronymic: null
+- groups: []
+  name: Kseniya
+  patronymic: ''
   status: Активен
   surname: Ostanina
 - groups:
   - 3
   name: Dariya
-  patronymic: null
+  patronymic: ''
   status: Активен
   surname: Markina
 - groups: []
   name: Alexey
-  patronymic: null
-  status: В отпуске
+  patronymic: ''
+  status: Активен
   surname: Vasiliev

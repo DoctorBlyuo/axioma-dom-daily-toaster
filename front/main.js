@@ -107,6 +107,72 @@ createApp({
         return Array.from(userSet.values());
     });
 
+        // Рулетка - drag & drop
+    let draggedRouletteUser = null;
+    let draggedRouletteGroup = null;
+
+    const dragRouletteUserStart = (event, user) => {
+        draggedRouletteUser = user;
+        event.dataTransfer.effectAllowed = 'move';
+        event.target.style.opacity = '0.5';
+    };
+
+    const dragRouletteUserEnd = (event) => {
+        event.target.style.opacity = '1';
+        draggedRouletteUser = null;
+    };
+
+    const dragRouletteGroupStart = (event, group) => {
+        draggedRouletteGroup = group;
+        event.dataTransfer.effectAllowed = 'move';
+        event.target.style.opacity = '0.5';
+    };
+
+    const dragRouletteGroupEnd = (event) => {
+        event.target.style.opacity = '1';
+        draggedRouletteGroup = null;
+    };
+
+    const dropToRoulette = async (event) => {
+        event.preventDefault();
+        const dropZone = event.currentTarget;
+        dropZone.classList.remove('drag-over');
+
+        // Добавляем пользователя
+        if (draggedRouletteUser) {
+            addUserToRoulette(draggedRouletteUser);
+            draggedRouletteUser = null;
+            return;
+        }
+
+        // Добавляем группу
+        if (draggedRouletteGroup) {
+            addGroupToRoulette(draggedRouletteGroup);
+            draggedRouletteGroup = null;
+            return;
+        }
+    };
+
+    const addUserToRoulette = (user) => {
+        // Проверяем, есть ли уже пользователь в списке
+        const userSet = new Set(rouletteSelectedUsers.value);
+        if (!userSet.has(user.id)) {
+            rouletteSelectedUsers.value.push(user.id);
+        }
+    };
+
+    const addGroupToRoulette = (group) => {
+        // Проверяем, есть ли уже группа в списке
+        const groupSet = new Set(rouletteSelectedGroups.value);
+        if (!groupSet.has(group.id)) {
+            rouletteSelectedGroups.value.push(group.id);
+        }
+    };
+
+    const removeUserFromRoulette = (userId) => {
+        rouletteSelectedUsers.value = rouletteSelectedUsers.value.filter(id => id !== userId);
+    };
+
     // Выбрать всех пользователей
     const selectAllUsers = computed({
         get: () => {
@@ -1199,7 +1265,15 @@ createApp({
       selectUserForGroup,
       dragUserStart,
       dragUserEnd,
-      dropUserToGroup
+      dropUserToGroup,
+      dragRouletteUserStart,
+      dragRouletteUserEnd,
+      dragRouletteGroupStart,
+      dragRouletteGroupEnd,
+      dropToRoulette,
+      addUserToRoulette,
+      addGroupToRoulette,
+      removeUserFromRoulette
     };
   },
 }).mount("#app");

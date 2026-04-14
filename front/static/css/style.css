@@ -2461,3 +2461,121 @@ body {
         max-height: 300px;
     }
 }
+
+/* Рулетка - новые стили для drag & drop */
+.drag-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 10px;
+    min-height: 0;
+}
+
+.user-drag-roulette {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 8px;
+    cursor: grab;
+    transition: all 0.2s;
+    border: 1px solid #e9ecef;
+}
+
+.user-drag-roulette:active {
+    cursor: grabbing;
+}
+
+.user-drag-roulette:hover {
+    background: #e8eef5;
+    transform: translateX(3px);
+    border-color: #667eea;
+}
+
+.user-drag-roulette-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.user-drag-roulette-name {
+    font-weight: 500;
+    font-size: 13px;
+    color: #333;
+}
+
+.user-drag-roulette-groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.group-drag-roulette {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 8px;
+    cursor: grab;
+    transition: all 0.2s;
+    border: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.group-drag-roulette:active {
+    cursor: grabbing;
+}
+
+.group-drag-roulette:hover {
+    background: #e8eef5;
+    transform: translateX(3px);
+    border-color: #667eea;
+}
+
+.group-drag-roulette-name {
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.group-drag-roulette-count {
+    font-size: 11px;
+    color: #999;
+}
+
+.drop-zone-roulette {
+    min-height: 300px;
+    transition: all 0.2s;
+}
+
+.drop-zone-roulette.drag-over {
+    background: #e0e7ff;
+    border: 2px dashed #667eea;
+    border-radius: 12px;
+}
+
+.remove-from-roulette {
+    background: #dc3545;
+    color: white;
+    border: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.remove-from-roulette:hover {
+    background: #c82333;
+    transform: scale(1.05);
+}
+
+.hint-small {
+    font-size: 11px;
+    margin-top: 5px;
+    color: #bbb;
+}

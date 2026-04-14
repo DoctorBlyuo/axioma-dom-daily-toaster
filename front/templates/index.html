@@ -12,245 +12,93 @@
         <!-- Вкладки -->
         <div class="tabs">
             <div>
-                <button
-                        class="tab-btn"
-                        :class="{ active: activeTab === 'toaster' }"
-                        @click="activeTab = 'toaster'"
-                >
-                    🍞 Тостер
-                </button>
-                <button
-                        class="tab-btn"
-                        :class="{ active: activeTab === 'roulette' }"
-                        @click="activeTab = 'roulette'"
-                >
-                    🎲 Рулетка
-                </button>
-                <button
-                        class="tab-btn"
-                        :class="{ active: activeTab === 'admin' }"
-                        @click="activeTab = 'admin'"
-                >
-                    ⚙️ Администрирование
-                </button>
+                <button class="tab-btn" :class="{ active: activeTab === 'toaster' }" @click="activeTab = 'toaster'">🍞 Тостер</button>
+                <button class="tab-btn" :class="{ active: activeTab === 'roulette' }" @click="activeTab = 'roulette'">🎲 Рулетка</button>
+                <button class="tab-btn" :class="{ active: activeTab === 'admin' }" @click="activeTab = 'admin'">⚙️ Администрирование</button>
             </div>
-            <p class="goal" v-if="currentGoal">
-                Цель спринта: <b>{{ currentGoal }}</b>
-            </p>
+            <p class="goal" v-if="currentGoal">Цель спринта: <b>{{ currentGoal }}</b></p>
         </div>
 
         <!-- Тостер -->
         <div class="tab-content" :class="{ active: activeTab === 'toaster' }">
             <div class="toaster-card">
-                <div class="toaster-header">
-                    <h1>🍞 AXIOMA Daily Toaster</h1>
-                </div>
+                <div class="toaster-header"><h1>🍞 AXIOMA Daily Toaster</h1></div>
                 <div class="toaster-body">
                     <div class="toaster-main">
-                        <!-- Таймер -->
                         <div class="timer-container">
                             <div class="timer-toast-icon" :class="toastClass">
                                 <span v-if="toastType === 'new'">🍞</span>
                                 <span v-else-if="toastType === 'ready'">🍞🔥</span>
                                 <span v-else>🍞💀</span>
                             </div>
-                            <div class="timer-display" :class="toastClass">
-                                {{ formattedTime }}
-                            </div>
+                            <div class="timer-display" :class="toastClass">{{ formattedTime }}</div>
                             <div class="timer-controls">
-                                <button
-                                        class="timer-btn"
-                                        @click="startTimer"
-                                        :disabled="timerRunning"
-                                >
-                                    ▶ Старт
-                                </button>
-                                <button
-                                        class="timer-btn"
-                                        @click="pauseTimer"
-                                        :disabled="!timerRunning"
-                                >
-                                    ⏸ Пауза
-                                </button>
-                                <button
-                                        class="timer-btn timer-btn-secondary"
-                                        @click="resetTimer"
-                                >
-                                    🔄 Сброс
-                                </button>
+                                <button class="timer-btn" @click="startTimer" :disabled="timerRunning">▶ Старт</button>
+                                <button class="timer-btn" @click="pauseTimer" :disabled="!timerRunning">⏸ Пауза</button>
+                                <button class="timer-btn timer-btn-secondary" @click="resetTimer">🔄 Сброс</button>
                             </div>
                         </div>
-
-                        <!-- Current User с анимированным человечком -->
                         <div class="current-user" v-if="currentUser">
                             <div class="speaker-animation">
-                                <div
-                                        class="speaker"
-                                        :class="{ 'talking': timerRunning, 'stopped': !timerRunning }"
-                                >
+                                <div class="speaker" :class="{ 'talking': timerRunning, 'stopped': !timerRunning }">
                                     <div class="speaker-body">
                                         <div class="speaker-head">
-                                            <div class="speaker-eyes">
-                                                <div class="speaker-eye"></div>
-                                                <div class="speaker-eye"></div>
-                                            </div>
+                                            <div class="speaker-eyes"><div class="speaker-eye"></div><div class="speaker-eye"></div></div>
                                             <div class="speaker-mouth"></div>
                                         </div>
-                                        <div class="speaker-arms">
-                                            <div class="speaker-arm"></div>
-                                            <div class="speaker-arm"></div>
-                                        </div>
-                                        <div class="speaker-legs">
-                                            <div class="speaker-leg"></div>
-                                            <div class="speaker-leg"></div>
-                                        </div>
+                                        <div class="speaker-arms"><div class="speaker-arm"></div><div class="speaker-arm"></div></div>
+                                        <div class="speaker-legs"><div class="speaker-leg"></div><div class="speaker-leg"></div></div>
                                     </div>
                                 </div>
-                                <!-- Звуковые круги -->
-                                <div class="sound-waves" v-if="timerRunning">
-                                    <div class="sound-wave"></div>
-                                    <div class="sound-wave"></div>
-                                    <div class="sound-wave"></div>
-                                </div>
+                                <div class="sound-waves" v-if="timerRunning"><div class="sound-wave"></div><div class="sound-wave"></div><div class="sound-wave"></div></div>
                                 <div class="speaker-mic" v-if="timerRunning">🎙️</div>
                             </div>
-                            <div class="current-user-name">
-                                {{ currentUser.surname }} {{ currentUser.name }} {{
-                                currentUser.patronymic }}
-                            </div>
+                            <div class="current-user-name">{{ currentUser.surname }} {{ currentUser.name }} {{ currentUser.patronymic }}</div>
                             <div class="current-user-status status-active">Активен</div>
                         </div>
                         <div class="current-user" v-else>
-                            <div class="speaker-animation">
-                                <div class="speaker stopped">
-                                    <div class="speaker-body">
-                                        <div class="speaker-head">
-                                            <div class="speaker-eyes">
-                                                <div class="speaker-eye"></div>
-                                                <div class="speaker-eye"></div>
-                                            </div>
-                                            <div class="speaker-mouth"></div>
-                                        </div>
-                                        <div class="speaker-arms">
-                                            <div class="speaker-arm"></div>
-                                            <div class="speaker-arm"></div>
-                                        </div>
-                                        <div class="speaker-legs">
-                                            <div class="speaker-leg"></div>
-                                            <div class="speaker-leg"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="current-user-name">
-                                Нет активных пользователей
-                            </div>
+                            <div class="speaker-animation"><div class="speaker stopped">...</div></div>
+                            <div class="current-user-name">Нет активных пользователей</div>
                         </div>
-
                         <div class="toaster-controls">
-                            <button
-                                    class="toaster-btn"
-                                    @click="nextUser"
-                                    :disabled="queueUsers.length === 0 || !timerRunning"
-                            >
-                                🎲 Следующий
-                            </button>
-                            <button
-                                    class="toaster-btn toaster-btn-warning"
-                                    @click="markLate"
-                                    :disabled="!currentUser"
-                            >
-                                ⏰ Опоздал
-                            </button>
-                            <button
-                                    class="toaster-btn toaster-btn-secondary"
-                                    @click="shuffleUsers(false)"
-                                    :disabled="activeUsers.length === 0"
-                            >
-                                🔄 Перемешать
-                            </button>
+                            <button class="toaster-btn" @click="nextUser" :disabled="queueUsers.length === 0 || !timerRunning">🎲 Следующий</button>
+                            <button class="toaster-btn toaster-btn-warning" @click="markLate" :disabled="!currentUser">⏰ Опоздал</button>
+                            <button class="toaster-btn toaster-btn-secondary" @click="shuffleUsers(false)" :disabled="activeUsers.length === 0">🔄 Перемешать</button>
                         </div>
                     </div>
-
                     <div class="toaster-sidebar">
                         <h3>Очередь выступлений</h3>
                         <div class="queue-list" v-if="queueUsers.length > 0">
-                            <div v-for="(user, idx) in queueUsers" :key="user.id"
-                                 class="queue-item"
-                                 :class="{
-                                     'active': currentUser && currentUser.id === user.id,
-                                     'late': lateUsers.has(user.id)
-                                 }"
-                                 @click="selectUser(user)">
+                            <div v-for="(user, idx) in queueUsers" :key="user.id" class="queue-item" :class="{ 'active': currentUser && currentUser.id === user.id, 'late': lateUsers.has(user.id) }" @click="selectUser(user)">
                                 <div class="queue-number">{{ user.fixedNumber || idx + 1 }}</div>
-                                <div class="queue-name">
-                                    {{ user.surname }} {{ user.name }} {{ user.patronymic }}
-                                </div>
+                                <div class="queue-name">{{ user.surname }} {{ user.name }} {{ user.patronymic }}</div>
                                 <div class="late-badge" v-if="lateUsers.has(user.id)">⏰</div>
                             </div>
                         </div>
-                        <div v-else class="empty-state">
-                            <div class="empty-icon">📭</div>
-                            <div>Нет пользователей в очереди</div>
-                        </div>
+                        <div v-else class="empty-state"><div class="empty-icon">📭</div><div>Нет пользователей в очереди</div></div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Рулетка -->
-        <!-- Рулетка -->
         <div class="tab-content" :class="{ active: activeTab === 'roulette' }">
             <div class="roulette-layout-new">
-                <!-- Левая колонка - участники -->
                 <div class="roulette-left-panel">
                     <div class="panel-section users-section">
-                        <div class="panel-header">
-                            <h3>👥 Все участники</h3>
-                            <label class="select-all-checkbox">
-                                <input type="checkbox" v-model="selectAllUsers" @change="toggleAllUsers">
-                                <span>Выбрать всех</span>
-                            </label>
-                        </div>
+                        <div class="panel-header"><h3>👥 Все участники</h3><label class="select-all-checkbox"><input type="checkbox" v-model="selectAllUsers" @change="toggleAllUsers"><span>Выбрать всех</span></label></div>
                         <div class="panel-scroll drag-scroll">
-                            <div v-for="user in activeUsers" :key="user.id"
-                                 class="user-drag-roulette"
-                                 draggable="true"
-                                 @dragstart="dragRouletteUserStart($event, user)"
-                                 @dragend="dragRouletteUserEnd"
-                                 @click="addUserToRoulette(user)">
-                                <div class="user-drag-roulette-info">
-                                    <span class="user-drag-roulette-name">{{ user.surname }} {{ user.name }} {{ user.patronymic }}</span>
-                                    <span class="user-status-badge" :class="{ 'active': user.status === 'Активен' }">
-                                {{ user.status === 'Активен' ? '✅' : '⏸️' }}
-                            </span>
-                                </div>
-                                <div class="user-drag-roulette-groups">
-                            <span v-for="groupId in user.groups" :key="groupId"
-                                  class="user-group-badge" :style="{ backgroundColor: getGroupColor(groupId) }">
-                                {{ getGroupName(groupId) }}
-                            </span>
-                                </div>
+                            <div v-for="user in activeUsers" :key="user.id" class="user-drag-roulette" draggable="true" @dragstart="dragRouletteUserStart($event, user)" @dragend="dragRouletteUserEnd" @click="addUserToRoulette(user)">
+                                <div class="user-drag-roulette-info"><span class="user-drag-roulette-name">{{ user.surname }} {{ user.name }} {{ user.patronymic }}</span><span class="user-status-badge" :class="{ 'active': user.status === 'Активен' }">{{ user.status === 'Активен' ? '✅' : '⏸️' }}</span></div>
+                                <div class="user-drag-roulette-groups"><span v-for="groupId in user.groups" :key="groupId" class="user-group-badge" :style="{ backgroundColor: getGroupColor(groupId) }">{{ getGroupName(groupId) }}</span></div>
                             </div>
                             <div v-if="activeUsers.length === 0" class="empty-message">Нет активных пользователей</div>
                         </div>
                     </div>
-
                     <div class="panel-section groups-section">
-                        <div class="panel-header">
-                            <h3>🏷️ Группы</h3>
-                            <label class="select-all-checkbox">
-                                <input type="checkbox" v-model="selectAllGroups" @change="toggleAllGroups">
-                                <span>Выбрать все</span>
-                            </label>
-                        </div>
+                        <div class="panel-header"><h3>🏷️ Группы</h3><label class="select-all-checkbox"><input type="checkbox" v-model="selectAllGroups" @change="toggleAllGroups"><span>Выбрать все</span></label></div>
                         <div class="panel-scroll drag-scroll">
-                            <div v-for="group in groups" :key="group.id"
-                                 class="group-drag-roulette"
-                                 draggable="true"
-                                 @dragstart="dragRouletteGroupStart($event, group)"
-                                 @dragend="dragRouletteGroupEnd"
-                                 @click="addGroupToRoulette(group)">
+                            <div v-for="group in groups" :key="group.id" class="group-drag-roulette" draggable="true" @dragstart="dragRouletteGroupStart($event, group)" @dragend="dragRouletteGroupEnd" @click="addGroupToRoulette(group)">
                                 <span class="group-drag-roulette-name" :style="{ color: group.color }">{{ group.name }}</span>
                                 <span class="group-drag-roulette-count">({{ getGroupUsers(group.id).length }})</span>
                             </div>
@@ -259,91 +107,43 @@
                     </div>
                 </div>
 
-                <!-- Центральная колонка - выбранные участники -->
                 <div class="roulette-center-panel">
-                    <div class="panel-header">
-                        <h3>🎯 Участники розыгрыша</h3>
-                        <div class="center-header-actions">
-                            <span class="selected-count">{{ rouletteFinalUsersList.length }} чел.</span>
-                            <button class="clear-selection-btn" @click="clearRouletteSelection" title="Очистить всё">🗑️</button>
-                        </div>
-                    </div>
-                    <div class="selected-users-list drop-zone-roulette"
-                         @dragover.prevent
-                         @drop.prevent="dropToRoulette">
+                    <div class="panel-header"><h3>🎯 Участники розыгрыша</h3><div class="center-header-actions"><span class="selected-count">{{ rouletteFinalUsersList.length }} чел.</span><button class="clear-selection-btn" @click="clearRouletteSelection" title="Очистить всё">🗑️</button></div></div>
+                    <div class="selected-users-list drop-zone-roulette" @dragover.prevent @drop.prevent="dropToRoulette">
                         <div v-for="(user, idx) in rouletteFinalUsersList" :key="user.id" class="selected-user-item">
                             <span class="selected-user-number">{{ idx + 1 }}</span>
                             <span class="selected-user-name">{{ user.surname }} {{ user.name }} {{ user.patronymic }}</span>
                             <button class="remove-from-roulette" @click="removeUserFromRoulette(user.id)" title="Удалить">✖</button>
                         </div>
-                        <div v-if="rouletteFinalUsersList.length === 0" class="empty-selected">
-                            <div class="empty-icon">🎲</div>
-                            <div>Перетащите пользователя или группу</div>
-                            <div class="hint-small">или нажмите на пользователя/группу</div>
-                        </div>
+                        <div v-if="rouletteFinalUsersList.length === 0" class="empty-selected"><div class="empty-icon">🎲</div><div>Перетащите пользователя или группу</div><div class="hint-small">или нажмите на пользователя/группу</div></div>
                     </div>
                 </div>
 
-                <!-- Правая колонка - рулетка -->
                 <div class="roulette-right-panel">
-                    <div class="roulette-header">
-                        <h2>🎲 <span class="gradient-text">Кто сегодня?</span> 🎲</h2>
-                    </div>
-
+                    <div class="roulette-header"><h2>🎲 <span class="gradient-text">Кто сегодня?</span> 🎲</h2></div>
                     <div class="spinner-area">
                         <div class="spinner-wrapper" :class="{ 'spinning': rouletteSpinning }">
                             <div class="neon-glow"></div>
                             <div class="wheel-of-fortune">
-                                <div class="wheel-outer">
-                                    <div class="wheel-inner">
-                                        <div class="wheel-slices">
-                                            <div v-for="i in 8" :key="i" class="wheel-slice" :style="{ transform: `rotate(${i * 45}deg)` }">
-                                                <span class="slice-label">🎲</span>
-                                            </div>
-                                        </div>
-                                        <div class="wheel-center">
-                                            <div class="wheel-center-icon" v-if="!rouletteSpinning && !rouletteWinner">🎲</div>
-                                            <div class="wheel-center-spinner" v-if="rouletteSpinning">
-                                                <div class="spinner-dot"></div>
-                                                <div class="spinner-dot"></div>
-                                                <div class="spinner-dot"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <div class="wheel-outer"><div class="wheel-inner">
+                                    <div class="wheel-slices"><div v-for="i in 8" :key="i" class="wheel-slice" :style="{ transform: `rotate(${i * 45}deg)` }"><span class="slice-label">🎲</span></div></div>
+                                    <div class="wheel-center"><div class="wheel-center-icon" v-if="!rouletteSpinning && !rouletteWinner">🎲</div><div class="wheel-center-spinner" v-if="rouletteSpinning"><div class="spinner-dot"></div><div class="spinner-dot"></div><div class="spinner-dot"></div></div></div>
+                                </div></div>
                             </div>
                             <div class="spinner-pointer">▼</div>
                             <div class="spinner-shadow"></div>
                         </div>
                     </div>
-
-                    <button class="spin-btn" @click="spinRoulette" :disabled="rouletteFinalUsersList.length === 0 || rouletteSpinning">
-                        <span class="btn-text">🎲 КРУТИТЬ! 🎲</span>
-                        <span class="btn-pulse"></span>
-                    </button>
-
+                    <button class="spin-btn" @click="spinRoulette" :disabled="rouletteFinalUsersList.length === 0 || rouletteSpinning"><span class="btn-text">🎲 КРУТИТЬ! 🎲</span><span class="btn-pulse"></span></button>
                     <div class="result-area" v-if="rouletteWinner && !rouletteSpinning">
                         <div class="result-card">
                             <div class="result-icon">🏆</div>
                             <div class="result-name">{{ rouletteWinner.surname }} {{ rouletteWinner.name }} {{ rouletteWinner.patronymic }}</div>
-                            <div class="result-status" :class="{ 'active': rouletteWinner.status === 'Активен' }">
-                                {{ rouletteWinner.status }}
-                            </div>
-                            <div class="result-groups" v-if="rouletteWinner.groups && rouletteWinner.groups.length">
-                        <span v-for="groupId in rouletteWinner.groups" :key="groupId"
-                              class="result-group-badge" :style="{ backgroundColor: getGroupColor(groupId) }">
-                            {{ getGroupName(groupId) }}
-                        </span>
-                            </div>
+                            <div class="result-status" :class="{ 'active': rouletteWinner.status === 'Активен' }">{{ rouletteWinner.status }}</div>
+                            <div class="result-groups" v-if="rouletteWinner.groups && rouletteWinner.groups.length"><span v-for="groupId in rouletteWinner.groups" :key="groupId" class="result-group-badge" :style="{ backgroundColor: getGroupColor(groupId) }">{{ getGroupName(groupId) }}</span></div>
                         </div>
                     </div>
-
-                    <div class="waiting-area" v-else-if="!rouletteWinner && !rouletteSpinning && rouletteFinalUsersList.length > 0">
-                        <div class="waiting-message">
-                            <div class="waiting-icon">🎲</div>
-                            <div>Нажмите "Крутить!"</div>
-                        </div>
-                    </div>
+                    <div class="waiting-area" v-else-if="!rouletteWinner && !rouletteSpinning && rouletteFinalUsersList.length > 0"><div class="waiting-message"><div class="waiting-icon">🎲</div><div>Нажмите "Крутить!"</div></div></div>
                 </div>
             </div>
         </div>
@@ -351,350 +151,117 @@
         <!-- Администрирование -->
         <div class="tab-content" :class="{ active: activeTab === 'admin' }">
             <div class="app-card">
-                <div class="app-header">
-                    <h1>
-                        <a href="/static/jira-helper/daily_jira_script_for_tampermonkey.user.js"
-                           class="helper-link" title="Скачать скрипт daily_jira_script_for_tampermonkey.user.js">⚙️</a>
-                        Администрирование
-                    </h1>
-                    <p>Управление пользователями и группами</p>
-                </div>
+                <div class="app-header"><h1><a href="/static/jira-helper/daily_jira_script_for_tampermonkey.user.js" class="helper-link" title="Скачать скрипт">⚙️</a> Администрирование</h1><p>Управление пользователями и группами</p></div>
                 <div class="app-content">
-                    <!-- Подвкладки -->
                     <div class="sub-tabs">
-                        <button class="sub-tab-btn" :class="{ active: adminSubTab === 'users' }" @click="adminSubTab = 'users'">
-                            👥 Пользователи
-                        </button>
-                        <button class="sub-tab-btn" :class="{ active: adminSubTab === 'groups' }" @click="adminSubTab = 'groups'">
-                            🏷️ Группы
-                        </button>
+                        <button class="sub-tab-btn" :class="{ active: adminSubTab === 'users' }" @click="adminSubTab = 'users'">👥 Пользователи</button>
+                        <button class="sub-tab-btn" :class="{ active: adminSubTab === 'groups' }" @click="adminSubTab = 'groups'">🏷️ Группы</button>
                     </div>
 
                     <!-- Управление пользователями -->
                     <div class="sub-tab-content" :class="{ active: adminSubTab === 'users' }">
-                        <div class="header-actions">
-                            <h2>Пользователи</h2>
-                            <div style="display: flex; gap: 10px;">
-                                <button class="add-button" @click="openAddModal">
-                                    ➕ Добавить пользователя
-                                </button>
-                                <button class="jira-settings-btn" @click="openJiraModal">🔧 Настройки Jira</button>
-                                <button class="add-button" style="background-color: #4a5568;" @click="downloadConfig">
-                                    💾 Скачать конфиг
-                                </button>
-                                <button class="add-button" style="background-color: #17a2b8;" @click="openUploadModal">
-                                    📂 Загрузить конфиг
-                                </button>
-                            </div>
-                        </div>
-
+                        <div class="header-actions"><h2>Пользователи</h2><div style="display: flex; gap: 10px;"><button class="add-button" @click="openAddModal">➕ Добавить пользователя</button><button class="jira-settings-btn" @click="openJiraModal">🔧 Настройки Jira</button><button class="add-button" style="background-color: #4a5568;" @click="downloadConfig">💾 Скачать конфиг</button><button class="add-button" style="background-color: #17a2b8;" @click="openUploadModal">📂 Загрузить конфиг</button></div></div>
                         <div class="lists-row">
-                            <div class="list-col">
-                                <div class="user-card">
-                                    <div class="card-header-active">
-                                        ✅ Активные
-                                        <span class="user-count">{{ activeUsers.length }}</span>
-                                    </div>
-                                    <div class="users-list" @dragover.prevent="onDragOver" @drop.prevent="onDrop($event, 'active')">
-                                        <div v-for="user in activeUsers" :key="user.id" class="user-item" draggable="true"
-                                             @dragstart="onDragStart($event, user, 'active')" @dragend="onDragEnd">
-                                            <div class="user-info">
-                                                <div class="user-fullname">{{ user.surname }} {{ user.name }} {{ user.patronymic }}</div>
-                                                <div class="user-groups">
-                                                    <span v-for="groupId in user.groups" :key="groupId"
-                                                          class="user-group-badge" :style="{ backgroundColor: getGroupColor(groupId) }">
-                                                        {{ getGroupName(groupId) }}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div class="user-actions">
-                                                <select class="status-select" :value="user.status" @change="changeStatus(user, $event.target.value)"
-                                                        @click.stop>
-                                                    <option value="Активен">Активен</option>
-                                                    <option value="В отпуске">В отпуске</option>
-                                                    <option value="Болеет">Болеет</option>
-                                                </select>
-                                                <button class="edit-btn" @click.stop="openEditModal(user)">✏️</button>
-                                                <button class="delete-btn" @click.stop="openDeleteModal(user)">🗑️</button>
-                                            </div>
-                                        </div>
-                                        <div v-if="activeUsers.length === 0" class="empty-state">
-                                            <div class="empty-icon">📭</div>
-                                            <div>Нет активных пользователей</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="list-col">
-                                <div class="user-card">
-                                    <div class="card-header-inactive">
-                                        ⏰ Неактивные
-                                        <span class="user-count">{{ inactiveUsers.length }}</span>
-                                    </div>
-                                    <div class="users-list" @dragover.prevent="onDragOver" @drop.prevent="onDrop($event, 'inactive')">
-                                        <div v-for="user in inactiveUsers" :key="user.id" class="user-item" draggable="true"
-                                             @dragstart="onDragStart($event, user, 'inactive')" @dragend="onDragEnd">
-                                            <div class="user-info">
-                                                <div class="user-fullname">{{ user.surname }} {{ user.name }} {{ user.patronymic }}</div>
-                                                <div class="user-groups">
-                                                    <span v-for="groupId in user.groups" :key="groupId"
-                                                          class="user-group-badge" :style="{ backgroundColor: getGroupColor(groupId) }">
-                                                        {{ getGroupName(groupId) }}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div class="user-actions">
-                                                <select class="status-select" :value="user.status" @change="changeStatus(user, $event.target.value)"
-                                                        @click.stop>
-                                                    <option value="Активен">Активен</option>
-                                                    <option value="В отпуске">В отпуске</option>
-                                                    <option value="Болеет">Болеет</option>
-                                                </select>
-                                                <button class="edit-btn" @click.stop="openEditModal(user)">✏️</button>
-                                                <button class="delete-btn" @click.stop="openDeleteModal(user)">🗑️</button>
-                                            </div>
-                                        </div>
-                                        <div v-if="inactiveUsers.length === 0" class="empty-state">
-                                            <div class="empty-icon">📭</div>
-                                            <div>Нет неактивных пользователей</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <div class="list-col"><div class="user-card"><div class="card-header-active">✅ Активные <span class="user-count">{{ activeUsers.length }}</span></div><div class="users-list" @dragover.prevent="onDragOver" @drop.prevent="onDrop($event, 'active')"><div v-for="user in activeUsers" :key="user.id" class="user-item" draggable="true" @dragstart="onDragStart($event, user, 'active')" @dragend="onDragEnd"><div class="user-info"><div class="user-fullname">{{ user.surname }} {{ user.name }} {{ user.patronymic }}</div><div class="user-groups"><span v-for="groupId in user.groups" :key="groupId" class="user-group-badge" :style="{ backgroundColor: getGroupColor(groupId) }">{{ getGroupName(groupId) }}</span></div></div><div class="user-actions"><select class="status-select" :value="user.status" @change="changeStatus(user, $event.target.value)" @click.stop><option value="Активен">Активен</option><option value="В отпуске">В отпуске</option><option value="Болеет">Болеет</option></select><button class="edit-btn" @click.stop="openEditModal(user)">✏️</button><button class="delete-btn" @click.stop="openDeleteModal(user)">🗑️</button></div></div><div v-if="activeUsers.length === 0" class="empty-state"><div class="empty-icon">📭</div><div>Нет активных пользователей</div></div></div></div></div>
+                            <div class="list-col"><div class="user-card"><div class="card-header-inactive">⏰ Неактивные <span class="user-count">{{ inactiveUsers.length }}</span></div><div class="users-list" @dragover.prevent="onDragOver" @drop.prevent="onDrop($event, 'inactive')"><div v-for="user in inactiveUsers" :key="user.id" class="user-item" draggable="true" @dragstart="onDragStart($event, user, 'inactive')" @dragend="onDragEnd"><div class="user-info"><div class="user-fullname">{{ user.surname }} {{ user.name }} {{ user.patronymic }}</div><div class="user-groups"><span v-for="groupId in user.groups" :key="groupId" class="user-group-badge" :style="{ backgroundColor: getGroupColor(groupId) }">{{ getGroupName(groupId) }}</span></div></div><div class="user-actions"><select class="status-select" :value="user.status" @change="changeStatus(user, $event.target.value)" @click.stop><option value="Активен">Активен</option><option value="В отпуске">В отпуске</option><option value="Болеет">Болеет</option></select><button class="edit-btn" @click.stop="openEditModal(user)">✏️</button><button class="delete-btn" @click.stop="openDeleteModal(user)">🗑️</button></div></div><div v-if="inactiveUsers.length === 0" class="empty-state"><div class="empty-icon">📭</div><div>Нет неактивных пользователей</div></div></div></div></div>
                         </div>
                     </div>
 
-                    <!-- Управление группами - новый дизайн -->
-                    <!-- Управление группами - исправленный дизайн -->
+                    <!-- Управление группами -->
                     <div class="sub-tab-content" :class="{ active: adminSubTab === 'groups' }">
                         <div class="groups-layout-v2">
-                            <!-- Левая панель - все пользователи -->
-                            <div class="groups-all-users">
-                                <div class="panel-header">
-                                    <h3>👥 Все пользователи</h3>
-                                </div>
-                                <div class="all-users-scroll" style="overflow-y: auto; height: 100%;">
-                                    <div v-for="user in allUsersList" :key="user.id"
-                                         class="user-drag-item"
-                                         draggable="true"
-                                         @dragstart="dragUserStart($event, user)"
-                                         @dragend="dragUserEnd"
-                                         @click="selectUserForGroup(user)">
-                                        <div class="user-drag-info">
-                                            <span class="user-drag-name">{{ user.surname }} {{ user.name }} {{ user.patronymic }}</span>
-                                        </div>
-                                        <div class="user-drag-groups">
-                        <span v-for="groupId in user.groups" :key="groupId"
-                              class="user-group-badge" :style="{ backgroundColor: getGroupColor(groupId) }">
-                            {{ getGroupName(groupId) }}
-                        </span>
-                                        </div>
-                                    </div>
-                                    <div v-if="allUsersList.length === 0" class="empty-users">Нет пользователей</div>
-                                </div>
-                            </div>
-
-                            <!-- Центральная панель - участники выбранной группы -->
-                            <div class="groups-selected-group">
-                                <div class="panel-header">
-                                    <h3 v-if="selectedGroupForMembers">🏷️ {{ selectedGroupForMembers.name }}</h3>
-                                    <h3 v-else>🏷️ Выберите группу</h3>
-                                    <div class="group-actions-header" v-if="selectedGroupForMembers">
-                                        <button class="edit-group-small" @click="openEditGroupModal(selectedGroupForMembers)">✏️</button>
-                                        <button class="delete-group-small" @click="openDeleteGroupModal(selectedGroupForMembers)">🗑️</button>
-                                    </div>
-                                </div>
-                                <div class="group-members-scroll"
-                                     @dragover.prevent
-                                     @drop.prevent="dropUserToGroup">
-                                    <div v-if="selectedGroupForMembers" class="group-members-container">
-                                        <div v-for="user in getGroupUsers(selectedGroupForMembers.id)" :key="user.id" class="group-member-v2">
-                                            <span class="member-name-v2">{{ user.surname }} {{ user.name }} {{ user.patronymic }}</span>
-                                            <button class="remove-member-v2" @click="removeUserFromGroup(user, selectedGroupForMembers.id)" title="Удалить">✖
-                                            </button>
-                                        </div>
-                                        <div v-if="getGroupUsers(selectedGroupForMembers.id).length === 0" class="empty-members-v2">
-                                            <div class="empty-icon">👥</div>
-                                            <div>Нет участников</div>
-                                            <div class="hint-text">Перетащите пользователя или нажмите на него</div>
-                                        </div>
-                                    </div>
-                                    <div v-else class="select-group-hint">
-                                        <div class="hint-icon">🏷️</div>
-                                        <div>Нажмите на группу справа</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Правая панель - список групп -->
-                            <div class="groups-right-list">
-                                <div class="panel-header">
-                                    <h3>🏷️ Группы</h3>
-                                    <button class="add-group-v2" @click="openAddGroupModal">➕ Добавить группу</button>
-                                </div>
-                                <div class="groups-right-scroll">
-                                    <div v-for="group in groups" :key="group.id"
-                                         class="group-right-item"
-                                         :class="{ active: selectedGroupForMembers && selectedGroupForMembers.id === group.id }"
-                                         @click="selectGroup(group)">
-                                        <div class="group-right-info">
-                                            <span class="group-right-name" :style="{ color: group.color }">{{ group.name }}</span>
-                                            <span class="group-right-count">({{ getGroupUsers(group.id).length }})</span>
-                                        </div>
-                                        <div class="group-right-actions" @click.stop>
-                                            <button class="group-edit-right" @click="openEditGroupModal(group)">✏️</button>
-                                            <button class="group-delete-right" @click="openDeleteGroupModal(group)">🗑️</button>
-                                        </div>
-                                    </div>
-                                    <div v-if="groups.length === 0" class="empty-groups-right">
-                                        <div class="empty-icon">🏷️</div>
-                                        <div>Нет групп</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Модалка удаления пользователя -->
-                    <div id="deleteModal" class="modal">
-                        <div class="modal-content">
-                            <div class="modal-header">Удалить пользователя</div>
-                            <div class="modal-body">
-                                <p>Вы уверены, что хотите удалить пользователя
-                                    <strong>{{ deleteUser?.surname }} {{ deleteUser?.name }} {{ deleteUser?.patronymic }}</strong>?
-                                </p>
-                            </div>
-                            <div class="modal-footer">
-                                <button class="modal-btn modal-btn-secondary" @click="closeDeleteModal">Отмена</button>
-                                <button class="modal-btn modal-btn-danger" @click="confirmDelete">Удалить</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Модалка загрузки конфига -->
-                    <div id="uploadModal" class="modal">
-                        <div class="modal-content">
-                            <div class="modal-header">📂 Загрузить конфиг</div>
-                            <div class="modal-body">
-                                <p>Выберите файл config.yaml для загрузки</p>
-                                <div class="form-group">
-                                    <label>Файл конфигурации</label>
-                                    <input type="file" id="configFile" accept=".yaml,.yml" @change="handleFileSelect"/>
-                                </div>
-                                <div v-if="uploadPreview" class="upload-preview">
-                                    <h4>Предпросмотр:</h4>
-                                    <pre>{{ uploadPreview }}</pre>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button class="modal-btn modal-btn-secondary" @click="closeUploadModal">Отмена</button>
-                                <button class="modal-btn modal-btn-primary" @click="uploadConfig" :disabled="!selectedFile">Загрузить и применить</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Модалка настроек Jira -->
-                    <!-- Модалка настроек Jira -->
-                    <div id="jiraModal" class="modal">
-                        <div class="modal-content modal-medium">
-                            <div class="modal-header">🔧 Настройки Jira</div>
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <label>URL Jira доски:</label>
-                                    <input type="text" v-model="jiraConfig.url" placeholder="https://...">
-                                </div>
-                                <div class="form-group">
-                                    <label>Origin (домен Jira):</label>
-                                    <input type="text" v-model="jiraConfig.origin" placeholder="https://...">
-                                </div>
-                                <div class="jira-test-section">
-                                    <button class="test-jira-btn" @click="testJiraConnection">🔗 Проверить подключение</button>
-                                    <div class="test-result" v-if="testResult">
-                    <span :class="testResult.success ? 'success' : 'error'">
-                        {{ testResult.message }}
-                    </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button class="modal-btn modal-btn-secondary" @click="closeJiraModal">Отмена</button>
-                                <button class="modal-btn modal-btn-primary" @click="saveJiraConfig">Сохранить</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Модалка добавления/редактирования группы -->
-                    <div id="groupModal" class="modal">
-                        <div class="modal-content">
-                            <div class="modal-header">{{ groupModalTitle }}</div>
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <label>Название группы</label>
-                                    <input type="text" v-model="groupForm.name" placeholder="Введите название группы">
-                                </div>
-                                <div class="form-group">
-                                    <label>Цвет группы</label>
-                                    <input type="color" v-model="groupForm.color" style="width: 100%; height: 40px;">
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button class="modal-btn modal-btn-secondary" @click="closeGroupModal">Отмена</button>
-                                <button class="modal-btn modal-btn-primary" @click="saveGroup">Сохранить</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Модалка удаления группы -->
-                    <div id="deleteGroupModal" class="modal">
-                        <div class="modal-content">
-                            <div class="modal-header">Удалить группу</div>
-                            <div class="modal-body">
-                                <p>Вы уверены, что хотите удалить группу <strong>{{ deleteGroup?.name }}</strong>?</p>
-                                <p style="color: #dc3545; margin-top: 10px;">Внимание! Пользователи, состоящие в этой группе, потеряют членство в ней.</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button class="modal-btn modal-btn-secondary" @click="closeDeleteGroupModal">Отмена</button>
-                                <button class="modal-btn modal-btn-danger" @click="confirmDeleteGroup">Удалить</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Модалка добавления участника в группу -->
-                    <div id="addMemberModal" class="modal">
-                        <div class="modal-content modal-medium">
-                            <div class="modal-header">👥 Добавить участника в группу <strong>{{ selectedGroup?.name }}</strong></div>
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <label>Поиск пользователя:</label>
-                                    <input type="text" v-model="memberSearchQuery" @input="filterUsersForGroup" placeholder="Введите имя или фамилию...">
-                                </div>
-                                <div class="available-users-list">
-                                    <div v-for="user in filteredAvailableUsers" :key="user.id" class="available-user-item" @click="addUserToGroup(user)">
-                                        <div class="user-info">
-                                            <div class="user-name">{{ user.surname }} {{ user.name }} {{ user.patronymic }}</div>
-                                            <div class="user-status"
-                                                 :class="{ 'status-active': user.status === 'Активен', 'status-inactive': user.status !== 'Активен' }">
-                                                {{ user.status }}
-                                            </div>
-                                        </div>
-                                        <button class="add-to-group-btn">➕ Добавить</button>
-                                    </div>
-                                    <div v-if="filteredAvailableUsers.length === 0" class="empty-state">
-                                        <div class="empty-icon">📭</div>
-                                        <div>Нет доступных пользователей</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button class="modal-btn modal-btn-secondary" @click="closeAddMemberModal">Закрыть</button>
-                            </div>
+                            <div class="groups-all-users"><div class="panel-header"><h3>👥 Все пользователи</h3></div><div class="all-users-scroll"><div v-for="user in allUsersList" :key="user.id" class="user-drag-item" draggable="true" @dragstart="dragUserStart($event, user)" @dragend="dragUserEnd" @click="selectUserForGroup(user)"><div class="user-drag-info"><span class="user-drag-name">{{ user.surname }} {{ user.name }} {{ user.patronymic }}</span></div><div class="user-drag-groups"><span v-for="groupId in user.groups" :key="groupId" class="user-group-badge" :style="{ backgroundColor: getGroupColor(groupId) }">{{ getGroupName(groupId) }}</span></div></div><div v-if="allUsersList.length === 0" class="empty-users">Нет пользователей</div></div></div>
+                            <div class="groups-selected-group"><div class="panel-header"><h3 v-if="selectedGroupForMembers">🏷️ {{ selectedGroupForMembers.name }}</h3><h3 v-else>🏷️ Выберите группу</h3><div class="group-actions-header" v-if="selectedGroupForMembers"><button class="edit-group-small" @click="openEditGroupModal(selectedGroupForMembers)">✏️</button><button class="delete-group-small" @click="openDeleteGroupModal(selectedGroupForMembers)">🗑️</button></div></div><div class="group-members-scroll" @dragover.prevent @drop.prevent="dropUserToGroup"><div v-if="selectedGroupForMembers" class="group-members-container"><div v-for="user in getGroupUsers(selectedGroupForMembers.id)" :key="user.id" class="group-member-v2"><span class="member-name-v2">{{ user.surname }} {{ user.name }} {{ user.patronymic }}</span><button class="remove-member-v2" @click="removeUserFromGroup(user, selectedGroupForMembers.id)" title="Удалить">✖</button></div><div v-if="getGroupUsers(selectedGroupForMembers.id).length === 0" class="empty-members-v2"><div class="empty-icon">👥</div><div>Нет участников</div><div class="hint-text">Перетащите пользователя или нажмите на него</div></div></div><div v-else class="select-group-hint"><div class="hint-icon">🏷️</div><div>Нажмите на группу справа</div></div></div></div>
+                            <div class="groups-right-list"><div class="panel-header"><h3>🏷️ Группы</h3><button class="add-group-v2" @click="openAddGroupModal">➕ Добавить группу</button></div><div class="groups-right-scroll"><div v-for="group in groups" :key="group.id" class="group-right-item" :class="{ active: selectedGroupForMembers && selectedGroupForMembers.id === group.id }" @click="selectGroup(group)"><div class="group-right-info"><span class="group-right-name" :style="{ color: group.color }">{{ group.name }}</span><span class="group-right-count">({{ getGroupUsers(group.id).length }})</span></div><div class="group-right-actions" @click.stop><button class="group-edit-right" @click="openEditGroupModal(group)">✏️</button><button class="group-delete-right" @click="openDeleteGroupModal(group)">🗑️</button></div></div><div v-if="groups.length === 0" class="empty-groups-right"><div class="empty-icon">🏷️</div><div>Нет групп</div></div></div></div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
 
-                <script src="/static/vue-3.5.32/vue.global.js"></script>
-                <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
-                <script src="/main.js"></script>
+    <!-- Модалка добавления/редактирования пользователя -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">{{ modalTitle }}</div>
+            <div class="modal-body">
+                <div class="form-group"><label>Фамилия</label><input type="text" v-model="form.surname" placeholder="Введите фамилию"/></div>
+                <div class="form-group"><label>Имя</label><input type="text" v-model="form.name" placeholder="Введите имя"/></div>
+                <div class="form-group"><label>Отчество</label><input type="text" v-model="form.patronymic" placeholder="Введите отчество"/></div>
+                <div class="form-group"><label>Статус</label><select v-model="form.status"><option value="Активен">Активен</option><option value="В отпуске">В отпуске</option><option value="Болеет">Болеет</option></select></div>
+                <div class="form-group"><label>Группы</label><div class="groups-grid"><label v-for="group in groups" :key="group.id" class="group-checkbox-simple"><input type="checkbox" :value="group.id" v-model="form.groups"><span class="group-name-simple" :style="{ color: group.color }">{{ group.name }}</span></label></div></div>
+            </div>
+            <div class="modal-footer"><button class="modal-btn modal-btn-secondary" @click="closeModal">Отмена</button><button class="modal-btn modal-btn-primary" @click="saveUser">Сохранить</button></div>
+        </div>
+    </div>
+
+    <!-- Модалка удаления пользователя -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Удалить пользователя</div>
+            <div class="modal-body"><p>Вы уверены, что хотите удалить пользователя <strong>{{ deleteUser?.surname }} {{ deleteUser?.name }} {{ deleteUser?.patronymic }}</strong>?</p></div>
+            <div class="modal-footer"><button class="modal-btn modal-btn-secondary" @click="closeDeleteModal">Отмена</button><button class="modal-btn modal-btn-danger" @click="confirmDelete">Удалить</button></div>
+        </div>
+    </div>
+
+    <!-- Модалка загрузки конфига -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">📂 Загрузить конфиг</div>
+            <div class="modal-body"><p>Выберите файл config.yaml для загрузки</p><div class="form-group"><label>Файл конфигурации</label><input type="file" id="configFile" accept=".yaml,.yml" @change="handleFileSelect"/></div><div v-if="uploadPreview" class="upload-preview"><h4>Предпросмотр:</h4><pre>{{ uploadPreview }}</pre></div></div>
+            <div class="modal-footer"><button class="modal-btn modal-btn-secondary" @click="closeUploadModal">Отмена</button><button class="modal-btn modal-btn-primary" @click="uploadConfig" :disabled="!selectedFile">Загрузить и применить</button></div>
+        </div>
+    </div>
+
+    <!-- Модалка настроек Jira -->
+    <div id="jiraModal" class="modal">
+        <div class="modal-content modal-medium">
+            <div class="modal-header">🔧 Настройки Jira</div>
+            <div class="modal-body">
+                <div class="form-group"><label>URL Jira доски:</label><input type="text" v-model="jiraConfig.url" placeholder="https://..."></div>
+                <div class="form-group"><label>Origin (домен Jira):</label><input type="text" v-model="jiraConfig.origin" placeholder="https://..."></div>
+                <div class="jira-test-section"><button class="test-jira-btn" @click="testJiraConnection">🔗 Проверить подключение</button><div class="test-result" v-if="testResult"><span :class="testResult.success ? 'success' : 'error'">{{ testResult.message }}</span></div></div>
+            </div>
+            <div class="modal-footer"><button class="modal-btn modal-btn-secondary" @click="closeJiraModal">Отмена</button><button class="modal-btn modal-btn-primary" @click="saveJiraConfig">Сохранить</button></div>
+        </div>
+    </div>
+
+    <!-- Модалка добавления/редактирования группы -->
+    <div id="groupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">{{ groupModalTitle }}</div>
+            <div class="modal-body">
+                <div class="form-group"><label>Название группы</label><input type="text" v-model="groupForm.name" placeholder="Введите название группы"></div>
+                <div class="form-group"><label>Цвет группы</label><input type="color" v-model="groupForm.color" style="width: 100%; height: 40px;"></div>
+            </div>
+            <div class="modal-footer"><button class="modal-btn modal-btn-secondary" @click="closeGroupModal">Отмена</button><button class="modal-btn modal-btn-primary" @click="saveGroup">Сохранить</button></div>
+        </div>
+    </div>
+
+    <!-- Модалка удаления группы -->
+    <div id="deleteGroupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Удалить группу</div>
+            <div class="modal-body"><p>Вы уверены, что хотите удалить группу <strong>{{ deleteGroup?.name }}</strong>?</p><p style="color: #dc3545; margin-top: 10px;">Внимание! Пользователи, состоящие в этой группе, потеряют членство в ней.</p></div>
+            <div class="modal-footer"><button class="modal-btn modal-btn-secondary" @click="closeDeleteGroupModal">Отмена</button><button class="modal-btn modal-btn-danger" @click="confirmDeleteGroup">Удалить</button></div>
+        </div>
+    </div>
+
+    <!-- Модалка добавления участника в группу -->
+    <div id="addMemberModal" class="modal">
+        <div class="modal-content modal-medium">
+            <div class="modal-header">👥 Добавить участника в группу <strong>{{ selectedGroup?.name }}</strong></div>
+            <div class="modal-body">
+                <div class="form-group"><label>Поиск пользователя:</label><input type="text" v-model="memberSearchQuery" @input="filterUsersForGroup" placeholder="Введите имя или фамилию..."></div>
+                <div class="available-users-list"><div v-for="user in filteredAvailableUsers" :key="user.id" class="available-user-item" @click="addUserToGroup(user)"><div class="user-info"><div class="user-name">{{ user.surname }} {{ user.name }} {{ user.patronymic }}</div><div class="user-status" :class="{ 'status-active': user.status === 'Активен', 'status-inactive': user.status !== 'Активен' }">{{ user.status }}</div></div><button class="add-to-group-btn">➕ Добавить</button></div><div v-if="filteredAvailableUsers.length === 0" class="empty-state"><div class="empty-icon">📭</div><div>Нет доступных пользователей</div></div></div>
+            </div>
+            <div class="modal-footer"><button class="modal-btn modal-btn-secondary" @click="closeAddMemberModal">Закрыть</button></div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/vue-3.5.32/vue.global.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+<script src="/main.js"></script>
 </body>
 </html>

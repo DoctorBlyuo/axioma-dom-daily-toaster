@@ -17,6 +17,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копируем остальной код
 COPY . .
 
+# Копируем шаблон конфига в config.yaml (если config.yaml не существует)
+RUN cp config.yaml.template config.yaml
+
 # Создаем папки для логов
 RUN mkdir -p /var/log/daily-toaster
 

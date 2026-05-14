@@ -764,7 +764,20 @@ createApp({
       activeUsers.value = users.filter((u) => u.status === "Активен");
       inactiveUsers.value = users.filter((u) => u.status !== "Активен");
 
-      initQueue();
+      // Вместо initQueue() вызываем shuffleUsers для перемешивания при загрузке
+      if (activeUsers.value.length > 0) {
+        // Инициализируем originalQueueOrder с исходным порядком
+        originalQueueOrder.value = activeUsers.value.map((user, index) => ({
+            ...user,
+            fixedNumber: index + 1
+        }));
+        // Перемешиваем очередь
+        shuffleUsers(false);
+      } else {
+        queueUsers.value = [];
+        currentUser.value = null;
+        resetTimer();
+      }
     };
 
     const downloadConfig = async () => {

@@ -33,33 +33,6 @@ users_auth = {
 }
 
 
-def sync_config_from_env_to_file():
-    """
-    Синхронизация: берет конфиг из переменной окружения (если она есть)
-    и записывает его в файл config.yaml
-    """
-    config_yaml = os.environ.get(ENV_CONFIG_VAR)
-
-    if config_yaml:
-        try:
-            # Парсим конфиг из переменной окружения
-            config = yaml.safe_load(config_yaml)
-            print("✅ Config loaded from environment variable")
-
-            # Записываем в файл
-            with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
-                yaml.dump(config, f, allow_unicode=True, default_flow_style=False)
-            print(f"✅ Config synced to file: {CONFIG_FILE}")
-
-            return True
-        except Exception as e:
-            print(f"❌ Error syncing config from env to file: {e}")
-            return False
-    else:
-        print(f"⚠️ Environment variable {ENV_CONFIG_VAR} not found, using existing file or creating default")
-        return False
-
-
 def load_full_config():
     """Загрузка полного конфига из YAML файла"""
     try:
@@ -220,44 +193,22 @@ def update_config():
     return jsonify({'ok': True})
 
 
-@app.route('/api/config/export-to-env', methods=['POST'])
-@auth.login_required
-def export_config_to_env():
-    """
-    Вспомогательный эндпоинт: экспортирует текущий конфиг из файла
-    в переменную окружения (печатает в лог, что нужно добавить вручную)
-    """
-    config = load_full_config()
-    config_yaml = yaml.dump(config, allow_unicode=True, default_flow_style=False)
-
-    print("\n" + "=" * 80)
-    print("💡 To make this config persistent across restarts, add this to Render Dashboard:")
-    print(f"   Environment Variable Name: {ENV_CONFIG_VAR}")
-    print("   Environment Variable Value (copy the entire YAML below):")
-    print("-" * 80)
-    print(config_yaml)
-    print("-" * 80)
-    print("=" * 80 + "\n")
-
-    return jsonify({
-        'ok': True,
-        'message': f'Config exported to logs. Add to {ENV_CONFIG_VAR} in Render Dashboard',
-        'env_var_name': ENV_CONFIG_VAR,
-        'config_yaml': config_yaml
-    })
-
-
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5001))
+
+    # ПРИ СТАРТЕ: если есть переменная окружения с конфигом - перезаписываем файл
+    env_config = os.environ.get('APP_CONFIG_DATA')
+    if env_config:
+        try:
+            config = yaml.safe_load(env_config)
+            with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
+                yaml.dump(config, f, allow_unicode=True, default_flow_style=False)
+            print("✅ Config restored from environment variable to file")
+        except Exception as e:
+            print(f"❌ Failed to restore config from env: {e}")
+    else:
+        print("ℹ️ No APP_CONFIG_DATA env var, using existing config file")
+
     print(f"Server running on port {port}")
     print(f"Config file: {CONFIG_FILE}")
-    print(f"Environment config var: {ENV_CONFIG_VAR}")
-
-    # ПРИ СТАРТЕ: синхронизируем конфиг из переменной окружения в файл
-    sync_config_from_env_to_file()
-
-    # Загружаем и выводим информацию о текущем конфиге
-    initial_config = load_full_config()
-    print(f"📋 Current config has {len(initial_config.get('users', []))} users, {len(initial_config.get('groups', []))} groups")
-
     app.run(debug=False, host='0.0.0.0', port=port)

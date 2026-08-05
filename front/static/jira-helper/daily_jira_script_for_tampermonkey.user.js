@@ -53,7 +53,7 @@
         const goalInterval = setInterval(() => {
             const goal = document.querySelector("#ghx-sprint-goal");
             if (goal) {
-                source.postMessage(goal.innerText, "https://axioma-dom-daily-toaster.onrender.com:443");
+                source.postMessage(goal.innerText, "http://82.147.67.222:8000");
                 clearInterval(goalInterval);
             }
         }, 100);
